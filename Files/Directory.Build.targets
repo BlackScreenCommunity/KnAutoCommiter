@@ -1,0 +1,19 @@
+<Project>
+	<ItemGroup Condition="'$(PkgPath)' != ''">
+		<Compile Remove="$(PkgPath)/KnAutoCommiter/Assemblies/**" />
+		<Compile Remove="$(PkgPath)/KnAutoCommiter/Data/**" />
+		<Compile Remove="$(PkgPath)/KnAutoCommiter/SqlScripts/**" />
+		<Compile Remove="$(PkgPath)/KnAutoCommiter/Schemas\**" />
+		<Compile Remove="$(PkgPath)/KnAutoCommiter/Resources/**" />
+		<EmbeddedResource Remove="$(PkgPath)/KnAutoCommiter/Assemblies/**" />
+		<EmbeddedResource Remove="$(PkgPath)/KnAutoCommiter/Data/**" />
+		<EmbeddedResource Remove="$(PkgPath)/KnAutoCommiter/SqlScripts/**" />
+		<EmbeddedResource Remove="$(PkgPath)/KnAutoCommiter/Schemas/**" />
+		<EmbeddedResource Remove="$(PkgPath)/KnAutoCommiter/Resources/**" />
+		<None Remove="$(PkgPath)/KnAutoCommiter/Assemblies/**" />
+		<None Remove="$(PkgPath)/KnAutoCommiter/Data/**" />
+		<None Remove="$(PkgPath)/KnAutoCommiter/SqlScripts/**" />
+		<None Remove="$(PkgPath)/KnAutoCommiter/Schemas/**" />
+		<None Remove="$(PkgPath)/KnAutoCommiter/Resources/**" />
+  </ItemGroup>
+</Project>

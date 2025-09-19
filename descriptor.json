@@ -1,0 +1,28 @@
+﻿{
+  "Descriptor": {
+    "UId": "4331c45f-ebf4-ac20-a584-c0c77a043be6",
+    "Name": "KnAutoCommiter",
+    "Type": 1,
+    "BPMSoftVersion": "1.4.1",
+    "ModifiedOnUtc": "\/Date(1758282855000)\/",
+    "Maintainer": "Kuzmin Nikolai",
+    "ProjectPath": "Files/KnAutoCommiter.csproj",
+    "DependsOn": [
+      {
+        "UId": "5be3998b-c5c3-42bb-a01c-2e4149059a97",
+        "PackageVersion": "1.0.0",
+        "Name": "Base"
+      },
+      {
+        "UId": "613fd913-be03-46ce-909b-f44e4225469e",
+        "PackageVersion": "1.0.0",
+        "Name": "UIv2"
+      },
+      {
+        "UId": "a7d9c356-450c-46d7-bc85-72dca4e280ba",
+        "PackageVersion": "1.0.0",
+        "Name": "NUI"
+      }
+    ]
+  }
+}
