@@ -8,7 +8,9 @@ namespace BPMSoft.Configuration
 	using BPMSoft.Core;
 	using BPMSoft.Web.Common;
 	using BPMSoft.Core.Entities;
-	
+    using System.Threading.Tasks;
+    using BPMSoft.Core.DB;
+
     [ServiceContract]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class KnCommiterService : BaseService
@@ -25,16 +27,20 @@ namespace BPMSoft.Configuration
 
         [OperationContract]
         [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
-        public string CommitChanges()
+        public async Task<string> CommitAndPushAllChangesAsync()
         {
             try
             {
-                var gitOperator = new GitOperator("C:\\Users\\nkuzmin\\git\\demorepository\\", "nickkuzmin1301", "");
-                Console.WriteLine("Commiting");
-                //gitOperator.StageChanges();
-                //gitOperator.CommitChanges();
-                //gitOperator.PushChanges();
+                string repositoryPath = GetSysSettingsValue("KnAutocommiterRepoPath");
+                string authorName = GetSysSettingsValue("KnAutocommiterAuthorName");
+                string authorEmail = GetSysSettingsValue("KnAutocommiterAuthorEmail");
+                string defaultCommitMessage = GetSysSettingsValue("KnAutocommiterDefaultCommitMessage");
 
+                IGitClient client = new GitCliClient();
+                await client.AddAllAndCommitAsync(repositoryPath, "Commit form autocommiter", authorName, authorEmail);
+
+                // TODO Определять автоматически название ветки
+                await client.PushAsync(repositoryPath, "origin", "main");
 
                 return "Done";
             }
@@ -43,6 +49,24 @@ namespace BPMSoft.Configuration
                 return ex.Message;
             }
         }
+
+        private string GetSysSettingsValue(string sysSettingsCode)
+        {
+
+            var sysSettingsId = GetSysSettingsId(sysSettingsCode);
+
+            return (
+                    new Select(SystemUserConnection)
+                    .Column("TextValue")
+                    .From("SysSettingsValue")
+                    .Where("SysSettingsId")
+                        .IsEqual(Column.Const(sysSettingsId))
+                        .And("SysAdminUnitId")
+                            .IsEqual(Column.Const("a29a3ba5-4b0d-de11-9a51-005056c00008")) as Select)
+                    .ExecuteScalar<string>();
+        }
+
+
 
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
@@ -62,5 +86,19 @@ namespace BPMSoft.Configuration
             return "GOT Pong VS Code Build";
         }
 
+
+        /**
+         * Получает идентификатор системной настройки по ее коду
+         */
+        internal Guid GetSysSettingsId(string sysSettingCode)
+        {
+            return (
+                    new Select(SystemUserConnection)
+                    .Column("Id")
+                    .From("SysSettings")
+                    .Where("Code")
+                        .IsEqual(Column.Const(sysSettingCode)) as Select)
+                    .ExecuteScalar<Guid>();
+        }
     }
 }
