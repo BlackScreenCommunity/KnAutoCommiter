@@ -1,15 +1,14 @@
 namespace BPMSoft.Configuration
 {
-
-	using System;
-	using System.ServiceModel;
-	using System.ServiceModel.Web;
-	using System.ServiceModel.Activation;
-	using BPMSoft.Core;
-	using BPMSoft.Web.Common;
-	using BPMSoft.Core.Entities;
+    using System;
+    using System.ServiceModel;
+    using System.ServiceModel.Web;
+    using System.ServiceModel.Activation;
+    using BPMSoft.Core;
+    using BPMSoft.Web.Common;
     using System.Threading.Tasks;
     using BPMSoft.Core.DB;
+    using BPMSoft.Common;
 
     [ServiceContract]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
@@ -25,28 +24,50 @@ namespace BPMSoft.Configuration
             }
         }
 
+        /// <summary>
+        /// Тестовый метод для проверки веб-сервиса
+        /// </summary>
+        /// <returns></returns>
         [OperationContract]
         [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
+        public string Ping()
+        {
+            return "Pong";
+        }
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
         public async Task<string> CommitAndPushAllChangesAsync()
         {
             try
             {
-                string repositoryPath = GetSysSettingsValue("KnAutocommiterRepoPath");
-                string authorName = GetSysSettingsValue("KnAutocommiterAuthorName");
-                string authorEmail = GetSysSettingsValue("KnAutocommiterAuthorEmail");
-                string defaultCommitMessage = GetSysSettingsValue("KnAutocommiterDefaultCommitMessage");
-
-                IGitClient client = new GitCliClient();
-                await client.AddAllAndCommitAsync(repositoryPath, "Commit form autocommiter", authorName, authorEmail);
-
-                // TODO Определять автоматически название ветки
-                await client.PushAsync(repositoryPath, "origin", "main");
+                await DoFullGitSyncIteration();
 
                 return "Done";
             }
             catch (Exception ex)
             {
                 return ex.Message;
+            }
+        }
+
+        private async Task DoFullGitSyncIteration()
+        {
+            IGitClient client = new GitCliClient();
+
+            string repositoryPath = GetSysSettingsValue("KnAutocommiterRepoPath");
+            string authorName = GetSysSettingsValue("KnAutocommiterAuthorName");
+            string authorEmail = GetSysSettingsValue("KnAutocommiterAuthorEmail");
+            string defaultCommitMessage = GetSysSettingsValue("KnAutocommiterDefaultCommitMessage");
+
+            await client.AddAllAndCommitAsync(repositoryPath, defaultCommitMessage, authorName, authorEmail);
+
+            string branchName = await client.GetCurrentBranchAsync(repositoryPath);
+            var upstream = await client.GetUpstreamAsync(repositoryPath);
+
+            if (branchName.IsNotNullOrEmpty() && upstream is object && upstream.Remote.IsNotNullOrEmpty())
+            {
+                await client.PushAsync(repositoryPath, upstream.Remote, branchName);
             }
         }
 
@@ -64,26 +85,6 @@ namespace BPMSoft.Configuration
                         .And("SysAdminUnitId")
                             .IsEqual(Column.Const("a29a3ba5-4b0d-de11-9a51-005056c00008")) as Select)
                     .ExecuteScalar<string>();
-        }
-
-
-
-        [OperationContract]
-        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
-        public string Ping()
-        {
-            return "Pong";
-        }
-
-        /// <summary>
-        /// Тестовый метод для проверки веб-сервиса
-        /// </summary>
-        /// <returns></returns>
-        [OperationContract]
-        [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
-        public string GetPing()
-        {
-            return "GOT Pong VS Code Build";
         }
 
 
