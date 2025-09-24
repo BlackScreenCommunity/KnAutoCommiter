@@ -137,6 +137,97 @@ namespace BPMSoft.Configuration
         }
 
 
+        public Task<IReadOnlyList<RemoteInfo>> GetRemotesAsync(string workdir, CancellationToken ct = default(CancellationToken))
+        {
+            return Task.Run(async () =>
+            {
+                var list = new List<RemoteInfo>();
+                var output = await _executor.RunAsync(workdir, "config --get-regexp ^remote\\..*\\.url", null, ct, /*acceptNonZeroExit*/ true).ConfigureAwait(false);
+
+                if (string.IsNullOrWhiteSpace(output))
+                    return (IReadOnlyList<RemoteInfo>)list;
+
+                var lines = output.Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < lines.Length; i++)
+                {
+                    var line = lines[i].Trim();
+                    int sp = line.IndexOf(' ');
+                    if (sp <= 0) continue;
+
+                    var left = line.Substring(0, sp);
+                    var url = line.Substring(sp + 1).Trim();
+
+                    var name = ExtractRemoteName(left); 
+                    if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(url))
+                        list.Add(new RemoteInfo(name, url));
+                }
+                return (IReadOnlyList<RemoteInfo>)DeduplicateRemotes(list);
+            });
+        }
+
+        private static string ExtractRemoteName(string left)
+        {
+            const string prefix = "remote.";
+            const string suffix = ".url";
+            if (!left.StartsWith(prefix, StringComparison.Ordinal)) return null;
+            if (!left.EndsWith(suffix, StringComparison.Ordinal)) return null;
+
+            var core = left.Substring(prefix.Length, left.Length - prefix.Length - suffix.Length);
+            return core;
+        }
+
+        private static IReadOnlyList<RemoteInfo> DeduplicateRemotes(List<RemoteInfo> list)
+        {
+            var set = new HashSet<string>(StringComparer.Ordinal);
+            var result = new List<RemoteInfo>();
+            for (int i = 0; i < list.Count; i++)
+            {
+                var key = list[i].Name + "\u001f" + list[i].Url;
+                if (set.Add(key))
+                    result.Add(list[i]);
+            }
+            return result;
+        }
+
+        public async Task<TrackingInfo> GetUpstreamAsync(string workdir, CancellationToken ct = default(CancellationToken))
+        {
+            var output = await _executor.RunAsync(workdir, "rev-parse --abbrev-ref --symbolic-full-name @{u}", null, ct, /*acceptNonZeroExit*/ true)
+                .ConfigureAwait(false);
+
+            var token = (output ?? string.Empty).Trim();
+            if (string.IsNullOrEmpty(token) || token == "@{u}")
+                return new TrackingInfo(null, null);
+
+            var slash = token.IndexOf('/');
+            if (slash > 0)
+            {
+                var remote = token.Substring(0, slash);
+                var branch = token.Substring(slash + 1);
+                return new TrackingInfo(remote, branch);
+            }
+            return new TrackingInfo(null, null);
+        }
+
+        public async Task<TrackingInfo> GetPushRemoteAsync(string workdir, CancellationToken ct = default(CancellationToken))
+        {
+            var output = await _executor.RunAsync(workdir, "rev-parse --abbrev-ref --symbolic-full-name @{push}", null, ct, /*acceptNonZeroExit*/ true)
+                .ConfigureAwait(false);
+
+            var token = (output ?? string.Empty).Trim();
+            if (string.IsNullOrEmpty(token) || token == "@{push}")
+                return new TrackingInfo(null, null);
+
+            var slash = token.IndexOf('/');
+            if (slash > 0)
+            {
+                var remote = token.Substring(0, slash);
+                var branch = token.Substring(slash + 1);
+                return new TrackingInfo(remote, branch);
+            }
+            return new TrackingInfo(null, null);
+        }
+
+
         private static string EscapeString(string s)
         {
             if (string.IsNullOrEmpty(s)) return "\"\"";
@@ -335,6 +426,49 @@ namespace BPMSoft.Configuration
         }
 
     }
+
+    public sealed class RemoteInfo
+    {
+        public string Name { get; private set; }
+        public string Url { get; private set; }
+
+        public RemoteInfo(string name, string url)
+        {
+            Name = name;
+            Url = url;
+        }
+
+        public override string ToString()
+        {
+            return Name + " => " + Url;
+        }
+    }
+
+    public sealed class TrackingInfo
+    {
+        // Пример: Remote="origin", Branch="main"
+        public string Remote { get; private set; }
+        public string Branch { get; private set; }
+
+        public TrackingInfo(string remote, string branch)
+        {
+            Remote = remote;
+            Branch = branch;
+        }
+
+        public bool IsEmpty()
+        {
+            return string.IsNullOrEmpty(Remote) || string.IsNullOrEmpty(Branch);
+        }
+
+        public override string ToString()
+        {
+            return string.IsNullOrEmpty(Remote) || string.IsNullOrEmpty(Branch)
+                ? "<no-tracking>"
+                : (Remote + "/" + Branch);
+        }
+    }
+
     public sealed class GitCliException : Exception
     {
         public GitCliException(string message) : base(message) { }
