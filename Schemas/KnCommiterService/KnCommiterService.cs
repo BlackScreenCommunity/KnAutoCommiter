@@ -14,14 +14,71 @@ namespace BPMSoft.Configuration
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
     public class KnCommiterService : BaseService
     {
-        // Ссылка на экземпляр UserConnection, требуемый для обращения к базе данных.
         private SystemUserConnection _systemUserConnection;
+        private string _repositoryPath;
+        private string _authorName;
+        private string _authorEmail;
+        private string _defaultCommitMessage;
+        private GitCliClient _gitCliClient;
+
         private SystemUserConnection SystemUserConnection
         {
             get
             {
                 return _systemUserConnection ?? (_systemUserConnection = (SystemUserConnection)AppConnection.SystemUserConnection);
             }
+        }
+
+        private string RepositoryPath
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_repositoryPath))
+                {
+                    _repositoryPath = GetSysSettingsValue("KnAutocommiterRepoPath");
+                }
+                return _repositoryPath;
+            }
+        }
+
+        private string AuthorName 
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_authorName))
+                {
+                    _authorName = GetSysSettingsValue("KnAutocommiterAuthorName");
+                }
+                return _authorName;
+            }
+        }
+        private string AuthorEmail
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_authorEmail))
+                {
+                    _authorEmail = GetSysSettingsValue("KnAutocommiterAuthorEmail");
+                }
+                return _authorEmail;
+            }
+        }
+        private string DefaultCommitMessage
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_defaultCommitMessage))
+                {
+                    _defaultCommitMessage = GetSysSettingsValue("KnAutocommiterDefaultCommitMessage");
+                }
+                return _defaultCommitMessage;
+            }
+        }
+
+        public GitCliClient GitCliClient { get => _gitCliClient; set => _gitCliClient = value; }
+
+        public KnCommiterService() : base() {
+            GitCliClient = new GitCliClient();
         }
 
         /// <summary>
