@@ -98,9 +98,8 @@ namespace BPMSoft.Configuration
         {
             try
             {
-                await DoFullGitSyncIteration();
-
-                return "Done";
+                string result = await DoFullGitSyncIteration();
+                return result;
             }
             catch (Exception ex)
             {
@@ -108,24 +107,36 @@ namespace BPMSoft.Configuration
             }
         }
 
-        private async Task DoFullGitSyncIteration()
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
+        public async Task<string> GetRepoStatus()
         {
-            IGitClient client = new GitCliClient();
+            try
+            {
+                string result = await GitCliClient.StatusPorcelainAsync(RepositoryPath);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
 
-            string repositoryPath = GetSysSettingsValue("KnAutocommiterRepoPath");
-            string authorName = GetSysSettingsValue("KnAutocommiterAuthorName");
-            string authorEmail = GetSysSettingsValue("KnAutocommiterAuthorEmail");
-            string defaultCommitMessage = GetSysSettingsValue("KnAutocommiterDefaultCommitMessage");
+        private async Task<string> DoFullGitSyncIteration()
+        {
+            var gitStatus = await GitCliClient.StatusPorcelainAsync(RepositoryPath);
 
-            await client.AddAllAndCommitAsync(repositoryPath, defaultCommitMessage, authorName, authorEmail);
+            await GitCliClient.AddAllAndCommitAsync(RepositoryPath, DefaultCommitMessage, AuthorName, AuthorEmail);
 
-            string branchName = await client.GetCurrentBranchAsync(repositoryPath);
-            var upstream = await client.GetUpstreamAsync(repositoryPath);
+            string branchName = await GitCliClient.GetCurrentBranchAsync(RepositoryPath);
+            var upstream = await GitCliClient.GetUpstreamAsync(RepositoryPath);
 
             if (branchName.IsNotNullOrEmpty() && upstream is object && upstream.Remote.IsNotNullOrEmpty())
             {
-                await client.PushAsync(repositoryPath, upstream.Remote, branchName);
+                await GitCliClient.PushAsync(RepositoryPath, upstream.Remote, branchName);
             }
+
+            return gitStatus;
         }
 
         private string GetSysSettingsValue(string sysSettingsCode)
