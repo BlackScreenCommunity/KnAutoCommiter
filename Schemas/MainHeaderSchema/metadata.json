@@ -1,0 +1,145 @@
+= MetaData.Schema.UId "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+= MetaData.Schema.A5 "ac1660b2-1954-4b54-a178-5eb0d880388a"
++ MetaData.Schema.B2 {
+  "UId": "2ba2d7e0-e32f-711c-042b-049ef8e8ce00",
+  "A2": "CannotEditPageMessage",
+  "A3": "6c11a9b0-0131-435a-bd84-f74412ea2cda",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0",
+  "A5": "ac1660b2-1954-4b54-a178-5eb0d880388a"
+}
++ MetaData.Schema.B2 {
+  "UId": "aec645f1-bb0b-44a3-89a0-1413ebe5b71a",
+  "A2": "ChatMenuSeparator",
+  "A3": "e7a55b95-1a9c-4f58-b621-dea85c191dcc",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0",
+  "A5": "ac1660b2-1954-4b54-a178-5eb0d880388a"
+}
++ MetaData.Schema.B2 {
+  "UId": "cf4634d7-a236-49c7-bf85-a6cae5940449",
+  "A2": "CompanyProfileCaption",
+  "A3": "3693e993-1c10-40eb-b471-223aea3eae68",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0",
+  "A5": "ac1660b2-1954-4b54-a178-5eb0d880388a"
+}
+= MetaData.Schema.B2.["9117003b-f0dd-4f32-85dc-8e2a94d21f0b"].A4 "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+= MetaData.Schema.B2.["9117003b-f0dd-4f32-85dc-8e2a94d21f0b"].A5 "ac1660b2-1954-4b54-a178-5eb0d880388a"
+= MetaData.Schema.B2.["d652640f-ad95-496c-ab48-b0119a08dd6a"].A4 "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+= MetaData.Schema.B2.["d652640f-ad95-496c-ab48-b0119a08dd6a"].A5 "ac1660b2-1954-4b54-a178-5eb0d880388a"
++ MetaData.Schema.B2 {
+  "UId": "5148c670-373d-481c-26d5-226cbb4c7673",
+  "A2": "EditPageCaption",
+  "A3": "6c11a9b0-0131-435a-bd84-f74412ea2cda",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0",
+  "A5": "ac1660b2-1954-4b54-a178-5eb0d880388a"
+}
+= MetaData.Schema.B2.["2d2ce293-8205-41e3-b76e-0450bffa058c"].A4 "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+= MetaData.Schema.B2.["2d2ce293-8205-41e3-b76e-0450bffa058c"].A5 "ac1660b2-1954-4b54-a178-5eb0d880388a"
++ MetaData.Schema.B2 {
+  "UId": "d0e0bd59-87fa-4b1c-938e-6919aa028e15",
+  "A2": "ExtendedUserProfileCaption",
+  "A3": "3693e993-1c10-40eb-b471-223aea3eae68",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0",
+  "A5": "ac1660b2-1954-4b54-a178-5eb0d880388a"
+}
+= MetaData.Schema.B2.["3968aa33-06d7-4e77-863c-57c2c7e22bb7"].A4 "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+= MetaData.Schema.B2.["3968aa33-06d7-4e77-863c-57c2c7e22bb7"].A5 "ac1660b2-1954-4b54-a178-5eb0d880388a"
++ MetaData.Schema.B2 {
+  "UId": "b42dd752-cffc-49fd-7248-e55f740c4536",
+  "A2": "OpenSystemDesignerCaption",
+  "A3": "6c11a9b0-0131-435a-bd84-f74412ea2cda",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0",
+  "A5": "ac1660b2-1954-4b54-a178-5eb0d880388a"
+}
+= MetaData.Schema.B2.["9dd95884-7e5c-4173-b716-1cc55015312a"].A4 "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+= MetaData.Schema.B2.["9dd95884-7e5c-4173-b716-1cc55015312a"].A5 "ac1660b2-1954-4b54-a178-5eb0d880388a"
+= MetaData.Schema.B2.["e95ef58a-67c7-4fad-b447-78c8d3588d74"].A4 "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+= MetaData.Schema.B2.["e95ef58a-67c7-4fad-b447-78c8d3588d74"].A5 "ac1660b2-1954-4b54-a178-5eb0d880388a"
++ MetaData.Schema.B2 {
+  "UId": "0b8bcdcb-73d0-4130-56cc-ea534bff136b",
+  "A2": "RedirectToWorkplaceCaption",
+  "A3": "6c11a9b0-0131-435a-bd84-f74412ea2cda",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0",
+  "A5": "ac1660b2-1954-4b54-a178-5eb0d880388a"
+}
++ MetaData.Schema.B2 {
+  "UId": "17139807-4733-48f8-8684-0f033d43e9c7",
+  "A2": "SspProfileCaption",
+  "A3": "3693e993-1c10-40eb-b471-223aea3eae68",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0",
+  "A5": "ac1660b2-1954-4b54-a178-5eb0d880388a"
+}
+= MetaData.Schema.B2.["7560bfa0-2f35-4c44-b150-348e01bcd3ad"].A4 "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+= MetaData.Schema.B2.["7560bfa0-2f35-4c44-b150-348e01bcd3ad"].A5 "ac1660b2-1954-4b54-a178-5eb0d880388a"
++ MetaData.Schema.B2 {
+  "UId": "5eebd946-9096-9947-47c8-96f3e6f0aac9",
+  "A2": "SystemDesignerMenuButtonHint",
+  "A3": "6c11a9b0-0131-435a-bd84-f74412ea2cda",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0",
+  "A5": "ac1660b2-1954-4b54-a178-5eb0d880388a"
+}
+= MetaData.Schema.B2.["2e5eaae7-62bb-48e5-a440-a40323c491af"].A4 "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+= MetaData.Schema.B2.["2e5eaae7-62bb-48e5-a440-a40323c491af"].A5 "ac1660b2-1954-4b54-a178-5eb0d880388a"
++ MetaData.Schema.B2 {
+  "UId": "6bb1566d-24dd-4064-a65d-3caab22e59a0",
+  "A2": "TelephonyMenuSeparator",
+  "A3": "73565bea-1d59-43b3-b768-c5c49217e66f",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0",
+  "A5": "ac1660b2-1954-4b54-a178-5eb0d880388a"
+}
+~ MetaData.Schema.B2 ["2ba2d7e0-e32f-711c-042b-049ef8e8ce00","aec645f1-bb0b-44a3-89a0-1413ebe5b71a","cf4634d7-a236-49c7-bf85-a6cae5940449","9117003b-f0dd-4f32-85dc-8e2a94d21f0b","d652640f-ad95-496c-ab48-b0119a08dd6a","5148c670-373d-481c-26d5-226cbb4c7673","2d2ce293-8205-41e3-b76e-0450bffa058c","d0e0bd59-87fa-4b1c-938e-6919aa028e15","3968aa33-06d7-4e77-863c-57c2c7e22bb7","b42dd752-cffc-49fd-7248-e55f740c4536","9dd95884-7e5c-4173-b716-1cc55015312a","e95ef58a-67c7-4fad-b447-78c8d3588d74","0b8bcdcb-73d0-4130-56cc-ea534bff136b","17139807-4733-48f8-8684-0f033d43e9c7","7560bfa0-2f35-4c44-b150-348e01bcd3ad","5eebd946-9096-9947-47c8-96f3e6f0aac9","2e5eaae7-62bb-48e5-a440-a40323c491af","6bb1566d-24dd-4064-a65d-3caab22e59a0"]
+= MetaData.Schema.B6 "4331c45f-ebf4-ac20-a584-c0c77a043be6"
++ MetaData.Schema.B7 true
+= MetaData.Schema.B8 "1.4.1.2"
+= MetaData.Schema.HD1 "52446ecf-4b3e-41ce-8962-e48c63d583f8"
++ MetaData.Schema.HD8 {
+  "UId": "00ea1f3a-f91c-46f0-8c7e-322243501667",
+  "A2": "CompanyProfileIcon",
+  "A3": "3693e993-1c10-40eb-b471-223aea3eae68",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+}
++ MetaData.Schema.HD8 {
+  "UId": "b088a415-f6bf-ec17-9496-a1f9495cdb6b",
+  "A2": "OperatorStatusOff",
+  "A3": "e7a55b95-1a9c-4f58-b621-dea85c191dcc",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+}
++ MetaData.Schema.HD8 {
+  "UId": "b6037a3a-4bbc-37f3-23d2-5cf429c8aaba",
+  "A2": "OperatorStatusOn",
+  "A3": "e7a55b95-1a9c-4f58-b621-dea85c191dcc",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+}
++ MetaData.Schema.HD8 {
+  "UId": "15a20fa6-cbc4-453c-1a82-47235c907468",
+  "A2": "PhoneStatusOff",
+  "A3": "e7a55b95-1a9c-4f58-b621-dea85c191dcc",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+}
++ MetaData.Schema.HD8 {
+  "UId": "3a2c8af2-ba9f-170e-4c2c-a94f7b5682e3",
+  "A2": "PhoneStatusOn",
+  "A3": "e7a55b95-1a9c-4f58-b621-dea85c191dcc",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+}
++ MetaData.Schema.HD8 {
+  "UId": "3f6ff0e5-bfc1-40ed-9355-7692d4a22f1e",
+  "A2": "SspExitButton",
+  "A3": "3693e993-1c10-40eb-b471-223aea3eae68",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+}
++ MetaData.Schema.HD8 {
+  "UId": "5e194ea3-3751-43f9-a1b0-7aae1b3bfb71",
+  "A2": "SspProfileIcon",
+  "A3": "3693e993-1c10-40eb-b471-223aea3eae68",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+}
++ MetaData.Schema.HD8 {
+  "UId": "73e1cf63-4764-4c99-a806-9d70a3de87d3",
+  "A2": "UserSettingsIcon",
+  "A3": "3693e993-1c10-40eb-b471-223aea3eae68",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+}
+~ MetaData.Schema.HD8 ["98b3fe67-3f56-4496-b998-e20b8c41e384","c1984c97-31b4-4c58-abdb-cace12cec4bd","6d7fa63c-2f70-4c64-a279-39ec75743be9","903c2387-f44d-45a5-99e5-627b1ee0d60d","0b7d1a0a-f105-4e99-bb76-d7b98d55c614","04e9871c-ec25-4da9-a00d-5cada8a4f152","00ea1f3a-f91c-46f0-8c7e-322243501667","b088a415-f6bf-ec17-9496-a1f9495cdb6b","b6037a3a-4bbc-37f3-23d2-5cf429c8aaba","15a20fa6-cbc4-453c-1a82-47235c907468","3a2c8af2-ba9f-170e-4c2c-a94f7b5682e3","3f6ff0e5-bfc1-40ed-9355-7692d4a22f1e","5e194ea3-3751-43f9-a1b0-7aae1b3bfb71","73e1cf63-4764-4c99-a806-9d70a3de87d3"]
++ MetaData.Schema.HD20 []
++ MetaData.Schema.HD21 []
++ MetaData.Schema.B7 true
