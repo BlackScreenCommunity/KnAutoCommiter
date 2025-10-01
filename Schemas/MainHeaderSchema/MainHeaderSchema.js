@@ -1,8 +1,13 @@
-define("MainHeaderSchema", [], function () {
+define("MainHeaderSchema", ["KnGitGuiMixin"], function () {
 	return {
+		mixins: {
+			KnGitGuiMixin: "BPMSoft.KnGitGuiMixin"
+		},
+		
 		methods: {
 			onGitGuiButtonClicked: function() {
 				console.log("Show window and call service");
+				this.mixins.KnGitGuiMixin.showModalBox();
 			}
 		},
 		diff: [
