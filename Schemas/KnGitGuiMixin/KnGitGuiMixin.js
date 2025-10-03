@@ -1,8 +1,9 @@
-define("KnGitGuiMixin", ["KnGitGuiMessageBox"], function () {
+define("KnGitGuiMixin", ["ext-base", "KnGitGuiMessageBox"], function (Ext) {
   Ext.define("BPMSoft.configuration.mixins.KnGitGuiMixin", {
     alternateClassName: "BPMSoft.KnGitGuiMixin",
 
     collection: null,
+    messageBoxInstance: null,
 
     showModalBox: function (next, data) {
       data = this.prepareCollection();
@@ -15,18 +16,17 @@ define("KnGitGuiMixin", ["KnGitGuiMessageBox"], function () {
           next(returnCode, rejectingReason);
         };
 
-        var messageBox = Ext.create("BPMSoft.KnGitGuiMessageBox", {
-          id: "KnGitGuiMessageBox",
-          handler: handler,
-          handlerScope: this,
-          gridData: data,
-          gridConfig: gridConfig,
-        });
+        if (!this.messageBoxInstance) {
+          this.messageBoxInstance = Ext.create("BPMSoft.KnGitGuiMessageBox", {
+            id: "KnGitGuiMessageBox",
+            handler: handler,
+            handlerScope: this,
+            gridData: data,
+            gridConfig: gridConfig,
+          });
+        }
 
-        messageBox.show();
-
-        //this.sandbox.registerMessages({"HistoryStateChanged": { "direction": "subscribe", "mode": "broadcast" }})
-        //this.sandbox.subscribe("HistoryStateChanged", messageBox.onDestroy.bind(messageBox), this);
+        this.messageBoxInstance.show();
       }
     },
 
@@ -51,11 +51,11 @@ define("KnGitGuiMixin", ["KnGitGuiMessageBox"], function () {
       changesData.forEach(function (changeItem) {
         var diffItem = Ext.create("BPMSoft.BaseGridRowViewModel", {
           columns: {
-            Name: {
+            Status: {
               name: "Status",
               dataValueType: BPMSoft.DataValueType.TEXT,
             },
-            NewValue: {
+            Name: {
               name: "Name",
               dataValueType: BPMSoft.DataValueType.TEXT,
             },
