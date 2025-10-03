@@ -190,46 +190,21 @@ define("KnGitGuiMessageBox", [
       var commitButtonConfig = {
         id: "GitGuiMessageBoxCommitButton",
         className: "BPMSoft.Button",
-        caption: Resources.localizableStrings.CommitButtonCaption,
-        markerValue: Resources.localizableStrings.CommitButtonCaption,
+        caption: "Сделать коммит",
+        markerValue: "commit",
         returnCode: "commit",
         style: "transparent",
         imageConfig: this.getButtonImageConfig("CommitButtonIcon"),
       };
       buttonsArray.push(commitButtonConfig);
 
-      var rejectButtonConfig = {
-        id: "GitGuiMessageBoxRejectButton",
-        className: "BPMSoft.Button",
-        caption: Resources.localizableStrings.RejectButtonCaption,
-        markerValue: Resources.localizableStrings.RejectButtonCaption,
-        returnCode: "reject",
-        visible: true,
-        style: "transparent",
-        imageConfig: this.getButtonImageConfig("CommitButtonIcon"),
-        handler: this.onRejectButtonClick.bind(this),
-      };
-      buttonsArray.push(rejectButtonConfig);
-
-      var cancelRejectingButton = {
-        id: "GitGuiMessageBoxeCancelRejectingButton",
-        className: "BPMSoft.Button",
-        caption: Resources.localizableStrings.CancelButtonCaption,
-        markerValue: Resources.localizableStrings.CancelButtonCaption,
-        returnCode: "cancelRejecting",
-        visible: true,
-        style: "default",
-        handler: this.onCancelRejectingButtonClick.bind(this),
-      };
-      buttonsArray.push(cancelRejectingButton);
-
       var closeButton = {
         id: "CloseMessageBoxButton",
         className: "BPMSoft.Button",
-        caption: Resources.localizableStrings.CloseButtonCaption,
-        markerValue: Resources.localizableStrings.CloseButtonCaption,
+        // caption: "Закрыть",
+        markerValue: "close",
         returnCode: "close",
-        visible: true,
+        imageConfig: this.getButtonImageConfig("CloseButtonIcon"),
         handler: this.onCloseMessageBoxButtonClick.bind(this),
       };
       buttonsArray.push(closeButton);
@@ -241,7 +216,7 @@ define("KnGitGuiMessageBox", [
      * Обработчик нажатия на кнопку "Закрыть"
      */
     onCloseMessageBoxButtonClick: function () {
-      this.onDestroy();
+      this.hide();
     },
 
     /**
@@ -257,41 +232,13 @@ define("KnGitGuiMessageBox", [
     },
 
     /**
-     * Устанавливает первоначальные значения видимости для элементов диалогового окна
-     */
-    setElementsVisibility: function () {
-      var confirmRejectingButton = this.getItem(
-        "GitGuiMessageBoxConfirmRejectingButton",
-      );
-      var cancelRejectingButton = this.getItem(
-        "GitGuiMessageBoxeCancelRejectingButton",
-      );
-    },
-
-    /**
      * Обрабатывает нажатие на кнопку
      */
     onButtonClick: function (dialog) {
       return function () {
-        var returnCode = this.returnCode;
         dialog.setVisible(false);
       };
     },
-
-    /**
-     * Обработчик нажатия на кнопку "Отклонить"
-     */
-    onRejectButtonClick: function () {},
-
-    /**
-     * Обработчик нажатия на кнопку "Отмена"
-     */
-    onCancelRejectingButtonClick: function () {},
-
-    /**
-     * Обработчик нажатия на кнопку "Сохранить"
-     */
-    onConfirmRejectingButton: function () {},
 
     /**
      * Возвращает компонент по его коду
@@ -347,7 +294,7 @@ define("KnGitGuiMessageBox", [
      * Обработчик уничтожения диалогового окна
      */
     onDestroy: function () {
-      this.destroygrid();
+      this.destroyGrid();
       this.removeCoverEl();
       this.callParent(arguments);
     },
@@ -355,7 +302,7 @@ define("KnGitGuiMessageBox", [
     /**
      * Уничтожает реестр на диалоговом окне
      */
-    destroygrid: function () {
+    destroyGrid: function () {
       this.grid.destroy();
       this.grid = null;
     },
@@ -365,7 +312,6 @@ define("KnGitGuiMessageBox", [
      */
     show: function () {
       this.setVisible(true);
-      this.setElementsVisibility();
     },
 
     /**
