@@ -1,120 +1,166 @@
-define("KnGitGuiMixin", ["ext-base", "KnGitGuiMessageBox"], function (Ext) {
-  Ext.define("BPMSoft.configuration.mixins.KnGitGuiMixin", {
-    alternateClassName: "BPMSoft.KnGitGuiMixin",
+define("KnGitGuiMixin", [
+	"ext-base",
+	"ServiceHelper",
+	"KnGitGuiMessageBox",
+], function (Ext, ServiceHelper) {
+	Ext.define("BPMSoft.configuration.mixins.KnGitGuiMixin", {
+		alternateClassName: "BPMSoft.KnGitGuiMixin",
 
-    collection: null,
-    messageBoxInstance: null,
+		collection: null,
+		messageBoxInstance: null,
 
-    showModalBox: function (next, data) {
-      data = this.prepareCollection();
+		changeStatusEnum: Object.freeze({
+			M: "Изменен",
+			T: "Изменен тип файла",
+			A: "Добавлен",
+			D: "Удален",
+			R: "Переименован",
+			C: "Скопирован",
+			U: "Обновлен, но есть конфликт",
+			"??": "Добавлен",
+		}),
 
-      if (data && data.getCount() >= 0) {
-        var gridConfig = this.getGridConfig();
+		showModalBox: function () {
+			var callback = function (data) {
+				if (data && data.getCount() >= 0) {
+					var gridConfig = this.getGridConfig();
 
-        var handler = function (returnCode, rejectingReason, scope) {
-          scope.onDestroy();
-          next(returnCode, rejectingReason);
-        };
+					var handler = function (
+						returnCode,
+						rejectingReason,
+						scope,
+					) {
+						scope.onDestroy();
+						//next(returnCode, rejectingReason);
+					};
 
-        if (!this.messageBoxInstance) {
-          this.messageBoxInstance = Ext.create("BPMSoft.KnGitGuiMessageBox", {
-            id: "KnGitGuiMessageBox",
-            handler: handler,
-            handlerScope: this,
-            gridData: data,
-            gridConfig: gridConfig,
-          });
-        }
+					if (!this.messageBoxInstance) {
+						this.messageBoxInstance = Ext.create(
+							"BPMSoft.KnGitGuiMessageBox",
+							{
+								id: "KnGitGuiMessageBox",
+								handler: handler,
+								handlerScope: this,
+								gridData: data,
+								gridConfig: gridConfig,
+							},
+						);
+					}
 
-        this.messageBoxInstance.show();
-      }
-    },
+					this.messageBoxInstance.show();
+				}
+			};
 
-    prepareCollection: function () {
-      var changesData = [];
+			this.prepareCollection(callback);
+		},
 
-      changesData.push({
-        Status: "Изменен",
-        Name: "MainHeaderSchema.js",
-      });
-      changesData.push({
-        Status: "Изменен",
-        Name: "KnGitCliMixin.js",
-      });
-      changesData.push({
-        Status: "Добавлен",
-        Name: "AccountPageV2.js",
-      });
+		prepareCollection: function (callback) {
+			var changesData = [];
 
-      var results = Ext.create("BPMSoft.BaseViewModelCollection");
+			ServiceHelper.callService(
+				"KnCommiterService",
+				"GetRepoStatus",
+				function (response) {
+					let data = {};
+					if (response && response.GetRepoStatusResult) {
+						data = response.GetRepoStatusResult.split("\r\n")
+							.map((x) => x.trim())
+							.filter((x) => x.length > 0)
+							.map((x) => this.splitStrinngByStatusAndFile(x))
+							.map((x) => ({
+								Status: this.changeStatusEnum[x.Status],
+								Name: x.Name,
+							}));
+					}
 
-      changesData.forEach(function (changeItem) {
-        var diffItem = Ext.create("BPMSoft.BaseGridRowViewModel", {
-          columns: {
-            Status: {
-              name: "Status",
-              dataValueType: BPMSoft.DataValueType.TEXT,
-            },
-            Name: {
-              name: "Name",
-              dataValueType: BPMSoft.DataValueType.TEXT,
-            },
-          },
-        });
-        diffItem.set("Status", changeItem.Status);
-        diffItem.set("Name", changeItem.Name);
+					console.table(data);
 
-        results.add(BPMSoft.generateGUID(), diffItem);
-      }, this);
+					var results = Ext.create("BPMSoft.BaseViewModelCollection");
 
-      return results;
-    },
+					data.forEach(function (changeItem) {
+						var diffItem = Ext.create(
+							"BPMSoft.BaseGridRowViewModel",
+							{
+								columns: {
+									Status: {
+										name: "Status",
+										dataValueType:
+											BPMSoft.DataValueType.TEXT,
+									},
+									Name: {
+										name: "Name",
+										dataValueType:
+											BPMSoft.DataValueType.TEXT,
+									},
+								},
+							},
+						);
+						diffItem.set("Status", changeItem.Status);
+						diffItem.set("Name", changeItem.Name);
 
-    /**
-     * Формирует настройки реестра изменений
-     * Настройки колонок реестра
-     */
-    getGridConfig: function () {
-      var listedConfig = {
-        captionsConfig: [],
-        columnsConfig: [],
-      };
+						results.add(BPMSoft.generateGUID(), diffItem);
+					}, this);
 
-      var statusColumn = {
-        cols: 5,
-        key: [
-          {
-            name: {
-              bindTo: "Status",
-            },
-            type: "text",
-          },
-        ],
-      };
-      var nameColumn = {
-        cols: 8,
-        key: [
-          {
-            name: {
-              bindTo: "Name",
-            },
-            type: "text",
-          },
-        ],
-      };
+					Ext.callback(callback, this, [results]);
+				},
+				{},
+				this,
+			);
+		},
 
-      listedConfig.columnsConfig.push(statusColumn);
-      listedConfig.columnsConfig.push(nameColumn);
+		/**
+		 * Формирует настройки реестра изменений
+		 * Настройки колонок реестра
+		 */
+		getGridConfig: function () {
+			var listedConfig = {
+				captionsConfig: [],
+				columnsConfig: [],
+			};
 
-      var gridConfig = {
-        type: "listed",
-        id: "kn-git-gui-client",
-        listedConfig: listedConfig,
-      };
+			var statusColumn = {
+				cols: 6,
+				key: [
+					{
+						name: {
+							bindTo: "Status",
+						},
+						type: "text",
+					},
+				],
+			};
+			var nameColumn = {
+				cols: 18,
+				key: [
+					{
+						name: {
+							bindTo: "Name",
+						},
+						type: "text",
+					},
+				],
+			};
 
-      return gridConfig;
-    },
-  });
+			listedConfig.columnsConfig.push(statusColumn);
+			listedConfig.columnsConfig.push(nameColumn);
 
-  return BPMSoft.KnGitGuiMixin;
+			var gridConfig = {
+				type: "listed",
+				id: "kn-git-gui-client",
+				listedConfig: listedConfig,
+			};
+
+			return gridConfig;
+		},
+
+		splitStrinngByStatusAndFile: function (statusLine) {
+			let position = statusLine.indexOf(" ");
+			return {
+				Status: statusLine.substr(0, position),
+				Name: statusLine.substr(position + 1),
+			};
+		},
+	});
+
+	return BPMSoft.KnGitGuiMixin;
 });
