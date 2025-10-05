@@ -114,12 +114,26 @@ define("KnGitGuiMixin", [
 		 */
 		getGridConfig: function () {
 			var listedConfig = {
-				captionsConfig: [],
+				captionsConfig: [
+					{
+						cols: 4,
+						name: "Фиксировать?",
+					},
+					{
+						cols: 3,
+						name: "Статус",
+					},
+					{
+						cols: 17,
+						name: "Название файла",
+					},
+				],
+
 				columnsConfig: [],
 			};
 
 			var statusColumn = {
-				cols: 6,
+				cols: 3,
 				key: [
 					{
 						name: {
@@ -130,7 +144,7 @@ define("KnGitGuiMixin", [
 				],
 			};
 			var nameColumn = {
-				cols: 18,
+				cols: 17,
 				key: [
 					{
 						name: {
@@ -148,6 +162,7 @@ define("KnGitGuiMixin", [
 				type: "listed",
 				id: "kn-git-gui-client",
 				listedConfig: listedConfig,
+				multiSelect: true,
 			};
 
 			return gridConfig;

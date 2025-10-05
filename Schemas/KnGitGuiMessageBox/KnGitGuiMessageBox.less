@@ -1,12 +1,9 @@
  .kn-dialog-box {
-	border-top: 2px solid;
-	border-radius: 2px;
-	width: 700px;
-	box-sizing: border-box;
+	width: 80vw;
 	padding: 32px;
 	position: fixed;
 	background-color: #fff;
-	z-index: 100;
+	z-index: 1011;
 }
 
 .kn-dialog-cover {
@@ -16,7 +13,7 @@
 	width: 100%;
 	height: 100%;
 	filter: alpha(opacity=0);
-	z-index: 99; 
+	z-index: 1010;
 	background-color: gray;
 	opacity: 0;
 	transition: opacity 1s ease;
@@ -34,7 +31,6 @@
 	left: 0;
 	right: 0;
 	margin: auto;
-	opacity: 1;
 	transition: top 1s ease, opacity 1s ease;
 }
 
@@ -89,5 +85,11 @@
 	position: absolute;
 	top: 0%;
 	right: 0%;
+	margin-top: 1em;
+}
+
+#KnGitGuiMessageBox-grid {
+	overflow: auto;
+	max-height: 30em;
 }
 
