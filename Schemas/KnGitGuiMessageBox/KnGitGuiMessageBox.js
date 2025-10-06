@@ -80,7 +80,6 @@ define("KnGitGuiMessageBox", [
 		initItems: function () {
 			this.items = this.getButtons();
 			this.callParent(arguments);
-			this.attachButtonsHandlers();
 		},
 
 		/**
@@ -195,6 +194,7 @@ define("KnGitGuiMessageBox", [
 				returnCode: "commit",
 				style: "transparent",
 				imageConfig: this.getButtonImageConfig("CommitButtonIcon"),
+				handler: this.onCommitMessageBoxButtonClick.bind(this),
 			};
 			buttonsArray.push(commitButtonConfig);
 
@@ -220,14 +220,19 @@ define("KnGitGuiMessageBox", [
 		},
 
 		/**
-		 * Добавляет обработчик нажатия на каждую из кнопок диалоговога окна
+		 * Обработчик нажатия на кнопку "Сделать коммит"
 		 */
-		attachButtonsHandlers: function () {
-			var buttons = this.items.items;
-			for (var i = 0; i < buttons.length; i++) {
-				if (!buttons[i].handler) {
-					buttons[i].on("click", this.onButtonClick(this));
-				}
+		onCommitMessageBoxButtonClick: function () {
+			if (
+				this.grid &&
+				this.grid.selectedRows &&
+				this.commitMessageBox &&
+				this.commitMessageBox.value
+			) {
+				let selectedFiles = this.grid.selectedRows
+					.map((x) => this.gridData.getByIndex(x))
+					.map((x) => x.get("Name"));
+				let commitMessage = this.commitMessageBox.value;
 			}
 		},
 
@@ -280,7 +285,9 @@ define("KnGitGuiMessageBox", [
 		 * Инициализируе компонент поля для ввода причины отказа
 		 */
 		initcommitMessageBox: function () {
-			var textBoxContainer = Ext.get(this.id + "-reason-text-box");
+			var textBoxContainer = Ext.get(
+				this.id + "-commit-message-text-box",
+			);
 
 			this.commitMessageBoxLabel = Ext.create("BPMSoft.Label", {
 				caption: Resources.localizableStrings.RejectingReasonCaption,
@@ -290,7 +297,8 @@ define("KnGitGuiMessageBox", [
 				},
 			});
 
-			this.commitMessageBox = Ext.create("BPMSoft.TextEdit", {
+			this.commitMessageBox = Ext.create("BPMSoft.MemoEdit", {
+				id: "commit-message-memo-edit",
 				renderTo: textBoxContainer,
 			});
 		},
