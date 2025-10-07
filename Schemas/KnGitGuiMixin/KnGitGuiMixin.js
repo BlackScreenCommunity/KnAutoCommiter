@@ -47,6 +47,13 @@ define("KnGitGuiMixin", [
 						);
 					}
 
+					this.messageBoxInstance.on(
+						"commitPrepared",
+						function () {
+							alert("event catched");
+						},
+						this,
+					);
 					this.messageBoxInstance.show();
 				}
 			};

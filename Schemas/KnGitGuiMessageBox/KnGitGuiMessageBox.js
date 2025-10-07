@@ -70,6 +70,8 @@ define("KnGitGuiMessageBox", [
 			this.caption = "GIT GUI";
 			this.selectors = this.getSelectors();
 
+			this.addEvents("commitPrepared");
+
 			this.message = "Зафиксируйте изменения";
 		},
 
@@ -233,6 +235,16 @@ define("KnGitGuiMessageBox", [
 					.map((x) => this.gridData.getByIndex(x))
 					.map((x) => x.get("Name"));
 				let commitMessage = this.commitMessageBox.value;
+
+				var commit = {
+					message: commitMessage,
+					changes: selectedFiles,
+				};
+
+				this.fireEvent("commitPrepared", {
+					eventName: "commitPrepared",
+					commitData: commit,
+				});
 			}
 		},
 
