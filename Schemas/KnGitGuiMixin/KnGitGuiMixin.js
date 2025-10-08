@@ -49,9 +49,7 @@ define("KnGitGuiMixin", [
 
 					this.messageBoxInstance.on(
 						"commitPrepared",
-						function () {
-							alert("event catched");
-						},
+						this.applyCommit,
 						this,
 					);
 					this.messageBoxInstance.show();
@@ -59,6 +57,17 @@ define("KnGitGuiMixin", [
 			};
 
 			this.prepareCollection(callback);
+		},
+
+		applyCommit(commit) {
+			console.log(commit);
+			ServiceHelper.callService(
+				"KnCommiterService",
+				"AddAndCommitChanges",
+				function () {},
+				commit,
+				this,
+			);
 		},
 
 		prepareCollection: function (callback) {

@@ -226,8 +226,7 @@ define("KnGitGuiMessageBox", [
 		 */
 		onCommitMessageBoxButtonClick: function () {
 			if (
-				this.grid &&
-				this.grid.selectedRows &&
+				this.grid?.selectedRows?.length > 0 &&
 				this.commitMessageBox &&
 				this.commitMessageBox.value
 			) {
@@ -241,10 +240,7 @@ define("KnGitGuiMessageBox", [
 					changes: selectedFiles,
 				};
 
-				this.fireEvent("commitPrepared", {
-					eventName: "commitPrepared",
-					commitData: commit,
-				});
+				this.fireEvent("commitPrepared", commit);
 			}
 		},
 
