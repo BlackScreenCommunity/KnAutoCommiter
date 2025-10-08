@@ -1,14 +1,17 @@
 namespace BPMSoft.Configuration
 {
-    using System;
-    using System.ServiceModel;
-    using System.ServiceModel.Web;
-    using System.ServiceModel.Activation;
-    using BPMSoft.Core;
-    using BPMSoft.Web.Common;
-    using System.Threading.Tasks;
-    using BPMSoft.Core.DB;
     using BPMSoft.Common;
+    using BPMSoft.Core;
+    using BPMSoft.Core.DB;
+    using BPMSoft.Web.Common;
+    using System;
+    using System.Collections.Generic;
+    using System.ServiceModel;
+    using System.ServiceModel.Activation;
+    using System.ServiceModel.Web;
+    using System.Threading.Tasks;
+    using Newtonsoft.Json;
+    using System.Runtime.Serialization;
 
     [ServiceContract]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
@@ -19,7 +22,7 @@ namespace BPMSoft.Configuration
         private string _authorName;
         private string _authorEmail;
         private string _defaultCommitMessage;
-        private GitCliClient _gitCliClient;
+        private IGitClient _gitCliClient;
 
         private SystemUserConnection SystemUserConnection
         {
@@ -75,7 +78,7 @@ namespace BPMSoft.Configuration
             }
         }
 
-        public GitCliClient GitCliClient { get => _gitCliClient; set => _gitCliClient = value; }
+        public IGitClient GitCliClient { get => _gitCliClient; set => _gitCliClient = value; }
 
         public KnCommiterService() : base() {
             GitCliClient = new GitCliClient();
@@ -115,6 +118,21 @@ namespace BPMSoft.Configuration
             {
                 string result = await GitCliClient.StatusPorcelainAsync(RepositoryPath);
                 return result;
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
+        public async Task<string> AddAndCommitChanges(string message, List<string> changes)
+        {
+            try
+            {
+                await GitCliClient.AddAsync(RepositoryPath, changes);
+                return "ok";
             }
             catch (Exception ex)
             {

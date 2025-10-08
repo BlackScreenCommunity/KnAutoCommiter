@@ -3,6 +3,8 @@ namespace BPMSoft.Configuration
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
+    using System.Linq;
     using System.Text;
     using System.Threading;
     using System.Threading.Tasks;
@@ -119,6 +121,61 @@ namespace BPMSoft.Configuration
         }
 
         /// <summary>
+        /// Добавить в индекс (stage) переданные файлы/папки.
+        /// Пути могут быть относительными (к directoryPath) или абсолютными (внутри репозитория).
+        /// </summary>
+        public async Task AddAsync(string directoryPath, IEnumerable<string> paths, CancellationToken ct = default(CancellationToken))
+        {
+            if (paths == null) return;
+
+            var list = new List<string>();
+            foreach (var p in paths)
+            {
+                if (string.IsNullOrWhiteSpace(p)) continue;
+                list.Add(p.Trim());
+            }
+            if (list.Count == 0) return;
+
+            var repoRoot = Path.GetFullPath(directoryPath);
+            var prepared = new List<string>(list.Count);
+            var seen = new HashSet<string>(StringComparer.Ordinal);
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                var raw = list[i];
+
+                string rel;
+                if (Path.IsPathRooted(raw))
+                {
+                    var full = Path.GetFullPath(raw);
+                    if (IsUnderRoot(full, repoRoot))
+                        rel = MakeRelative(repoRoot, full);
+                    else
+                        rel = full;
+                }
+                else
+                {
+                    rel = raw.Replace('\\', '/'); 
+                }
+
+                if (rel.StartsWith("./", StringComparison.Ordinal)) rel = rel.Substring(2);
+
+                if (!string.IsNullOrWhiteSpace(rel) && seen.Add(rel))
+                    prepared.Add(rel);
+            }
+
+            if (prepared.Count == 0) return;
+
+            const int batchSize = 100;
+            for (int i = 0; i < prepared.Count; i += batchSize)
+            {
+                var chunk = prepared.Skip(i).Take(batchSize).ToArray();
+                var args = "add -- " + string.Join(" ", chunk.Select(EscapeString));
+                await _executor.RunAsync(directoryPath, args, null, ct, /*acceptNonZeroExit*/ false).ConfigureAwait(false);
+            }
+        }
+
+        /// <summary>
         /// Фиксирует коммит в удаленном репозитории
         /// </summary>
         /// <param name="directoryPath"></param>
@@ -231,7 +288,6 @@ namespace BPMSoft.Configuration
         private static string EscapeString(string s)
         {
             if (string.IsNullOrEmpty(s)) return "\"\"";
-            // 2) экранируем обратные слэши перед кавычкой
             var sb = new StringBuilder();
             sb.Append('"');
             for (int i = 0; i < s.Length; i++)
@@ -245,6 +301,31 @@ namespace BPMSoft.Configuration
             }
             sb.Append('"');
             return sb.ToString();
+        }
+
+        private static bool IsUnderRoot(string fullPath, string root)
+        {
+            var r = root;
+            if (!r.EndsWith(Path.DirectorySeparatorChar.ToString(), StringComparison.Ordinal) &&
+                !r.EndsWith(Path.AltDirectorySeparatorChar.ToString(), StringComparison.Ordinal))
+                r += Path.DirectorySeparatorChar;
+
+            return fullPath.StartsWith(r, StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static string MakeRelative(string baseDir, string fullPath)
+        {
+            var baseUri = new Uri(AppendSlash(baseDir));
+            var fileUri = new Uri(fullPath);
+            var rel = Uri.UnescapeDataString(baseUri.MakeRelativeUri(fileUri).ToString());
+            return rel.Replace('\\', '/');
+        }
+
+        private static string AppendSlash(string path)
+        {
+            if (string.IsNullOrEmpty(path)) return path;
+            if (path.EndsWith("/", StringComparison.Ordinal) || path.EndsWith("\\", StringComparison.Ordinal)) return path;
+            return path + Path.DirectorySeparatorChar;
         }
     }
 
