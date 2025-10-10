@@ -139,7 +139,13 @@
   "A3": "3693e993-1c10-40eb-b471-223aea3eae68",
   "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
 }
-~ MetaData.Schema.HD8 ["98b3fe67-3f56-4496-b998-e20b8c41e384","c1984c97-31b4-4c58-abdb-cace12cec4bd","6d7fa63c-2f70-4c64-a279-39ec75743be9","903c2387-f44d-45a5-99e5-627b1ee0d60d","0b7d1a0a-f105-4e99-bb76-d7b98d55c614","04e9871c-ec25-4da9-a00d-5cada8a4f152","00ea1f3a-f91c-46f0-8c7e-322243501667","b088a415-f6bf-ec17-9496-a1f9495cdb6b","b6037a3a-4bbc-37f3-23d2-5cf429c8aaba","15a20fa6-cbc4-453c-1a82-47235c907468","3a2c8af2-ba9f-170e-4c2c-a94f7b5682e3","3f6ff0e5-bfc1-40ed-9355-7692d4a22f1e","5e194ea3-3751-43f9-a1b0-7aae1b3bfb71","73e1cf63-4764-4c99-a806-9d70a3de87d3"]
++ MetaData.Schema.HD8 {
+  "UId": "bafbc18d-87c9-5bf3-9c8e-0c673c5ad829",
+  "A2": "GitClientIcon",
+  "A3": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0",
+  "A4": "37cd66a8-dfc6-4483-a6a8-12e19d6d40f0"
+}
+~ MetaData.Schema.HD8 ["98b3fe67-3f56-4496-b998-e20b8c41e384","c1984c97-31b4-4c58-abdb-cace12cec4bd","6d7fa63c-2f70-4c64-a279-39ec75743be9","903c2387-f44d-45a5-99e5-627b1ee0d60d","0b7d1a0a-f105-4e99-bb76-d7b98d55c614","04e9871c-ec25-4da9-a00d-5cada8a4f152","00ea1f3a-f91c-46f0-8c7e-322243501667","b088a415-f6bf-ec17-9496-a1f9495cdb6b","b6037a3a-4bbc-37f3-23d2-5cf429c8aaba","15a20fa6-cbc4-453c-1a82-47235c907468","3a2c8af2-ba9f-170e-4c2c-a94f7b5682e3","3f6ff0e5-bfc1-40ed-9355-7692d4a22f1e","5e194ea3-3751-43f9-a1b0-7aae1b3bfb71","73e1cf63-4764-4c99-a806-9d70a3de87d3","bafbc18d-87c9-5bf3-9c8e-0c673c5ad829"]
 + MetaData.Schema.HD20 []
 + MetaData.Schema.HD21 []
 + MetaData.Schema.B7 true
