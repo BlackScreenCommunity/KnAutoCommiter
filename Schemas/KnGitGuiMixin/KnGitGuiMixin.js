@@ -150,6 +150,14 @@ define("KnGitGuiMixin", [
 				columnsConfig: [],
 			};
 
+			var isNeedToAddColumn = {
+				cols: 4,
+				key: [
+					{
+						type: "text",
+					},
+				],
+			};
 			var statusColumn = {
 				cols: 3,
 				key: [
@@ -173,6 +181,7 @@ define("KnGitGuiMixin", [
 				],
 			};
 
+			listedConfig.columnsConfig.push(isNeedToAddColumn);
 			listedConfig.columnsConfig.push(statusColumn);
 			listedConfig.columnsConfig.push(nameColumn);
 
