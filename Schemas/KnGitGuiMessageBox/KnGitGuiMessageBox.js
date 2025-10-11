@@ -275,6 +275,10 @@ define("KnGitGuiMessageBox", [
 				Ext.create("BPMSoft.BaseViewModelCollection"),
 			);
 
+			let gridElement = Ext.get("grid-kn-git-gui-client-wrap");
+			if (gridElement) {
+				gridElement.destroy();
+			}
 			var gridContainer = Ext.get(this.id + "-grid");
 			var gridConfig = Ext.apply(this.gridConfig, {
 				collection: {

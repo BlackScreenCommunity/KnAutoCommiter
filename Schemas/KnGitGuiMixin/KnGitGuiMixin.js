@@ -54,72 +54,76 @@ define("KnGitGuiMixin", [
 						this.applyCommit,
 						this,
 					);
-					this.messageBoxInstance.show();
+					if (this.messageBoxInstance.visible) {
+						this.messageBoxInstance.initgrid();
+					} else {
+						this.messageBoxInstance.show();
+					}
 				}
 			};
 
 			this.prepareCollection(callback);
 		},
 
-		applyCommit(commit) {
+		applyCommit: function (commit) {
 			console.log(commit);
 			ServiceHelper.callService(
 				"KnCommiterService",
 				"AddAndCommitChanges",
-				function () {},
+				function () {
+					this.showModalBox();
+				},
 				commit,
 				this,
 			);
 		},
 
-		prepareCollection: function (callback) {
-			var changesData = [];
+		prepareGridData: function (gitStatusInfo) {
+			let data = gitStatusInfo
+				.split("\r\n")
+				.map((x) => x.trim())
+				.filter((x) => x.length > 0)
+				.map((x) => this.splitStrinngByStatusAndFile(x))
+				.map((x) => ({
+					Status: this.changeStatusEnum[x.Status],
+					Name: x.Name,
+				}));
 
+			var results = Ext.create("BPMSoft.BaseViewModelCollection");
+
+			data.forEach(function (changeItem) {
+				var diffItem = Ext.create("BPMSoft.BaseGridRowViewModel", {
+					columns: {
+						Status: {
+							name: "Status",
+							dataValueType: BPMSoft.DataValueType.TEXT,
+						},
+						Name: {
+							name: "Name",
+							dataValueType: BPMSoft.DataValueType.TEXT,
+						},
+					},
+				});
+				diffItem.set("Status", changeItem.Status);
+				diffItem.set("Name", changeItem.Name);
+
+				results.add(BPMSoft.generateGUID(), diffItem);
+			});
+
+			return results;
+		},
+
+		prepareCollection: function (callback) {
 			ServiceHelper.callService(
 				"KnCommiterService",
 				"GetRepoStatus",
 				function (response) {
-					let data = {};
 					if (response && response.GetRepoStatusResult) {
-						data = response.GetRepoStatusResult.split("\r\n")
-							.map((x) => x.trim())
-							.filter((x) => x.length > 0)
-							.map((x) => this.splitStrinngByStatusAndFile(x))
-							.map((x) => ({
-								Status: this.changeStatusEnum[x.Status],
-								Name: x.Name,
-							}));
-					}
-
-					console.table(data);
-
-					var results = Ext.create("BPMSoft.BaseViewModelCollection");
-
-					data.forEach(function (changeItem) {
-						var diffItem = Ext.create(
-							"BPMSoft.BaseGridRowViewModel",
-							{
-								columns: {
-									Status: {
-										name: "Status",
-										dataValueType:
-											BPMSoft.DataValueType.TEXT,
-									},
-									Name: {
-										name: "Name",
-										dataValueType:
-											BPMSoft.DataValueType.TEXT,
-									},
-								},
-							},
+						let gridContent = this.prepareGridData(
+							response.GetRepoStatusResult,
 						);
-						diffItem.set("Status", changeItem.Status);
-						diffItem.set("Name", changeItem.Name);
-
-						results.add(BPMSoft.generateGUID(), diffItem);
-					}, this);
-
-					Ext.callback(callback, this, [results]);
+						Ext.callback(callback, this, [gridContent]);
+					}
 				},
 				{},
 				this,
