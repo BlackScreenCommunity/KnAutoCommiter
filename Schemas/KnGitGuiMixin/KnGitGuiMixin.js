@@ -10,14 +10,17 @@ define("KnGitGuiMixin", [
 		messageBoxInstance: null,
 
 		changeStatusEnum: Object.freeze({
-			M: "Изменен",
-			T: "Изменен тип файла",
-			A: "Добавлен",
-			D: "Удален",
-			R: "Переименован",
-			C: "Скопирован",
-			U: "Обновлен, но есть конфликт",
-			"??": "Добавлен",
+			" M": "Изменен",
+			"M ": "Изменен и готов к фиксации",
+			MM: "Часть изменений зафиксирована",
+			"A ": "Добавлен",
+			AM: "Новый файл, часть изменений зафиксирована",
+			" D": "Удален и готов к фиксации",
+			"D ": "Удален",
+			"R ": "Переименован",
+			"C ": "Скопирован",
+			"??": "Создан",
+			UU: "Конфликт",
 		}),
 
 		showModalBox: function () {
@@ -81,7 +84,6 @@ define("KnGitGuiMixin", [
 		prepareGridData: function (gitStatusInfo) {
 			let data = gitStatusInfo
 				.split("\r\n")
-				.map((x) => x.trim())
 				.filter((x) => x.length > 0)
 				.map((x) => this.splitStrinngByStatusAndFile(x))
 				.map((x) => ({
@@ -200,7 +202,7 @@ define("KnGitGuiMixin", [
 		},
 
 		splitStrinngByStatusAndFile: function (statusLine) {
-			let position = statusLine.indexOf(" ");
+			let position = 2;
 			return {
 				Status: statusLine.substr(0, position),
 				Name: statusLine.substr(position + 1),
