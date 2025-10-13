@@ -10,8 +10,6 @@ namespace BPMSoft.Configuration
     using System.ServiceModel.Activation;
     using System.ServiceModel.Web;
     using System.Threading.Tasks;
-    using Newtonsoft.Json;
-    using System.Runtime.Serialization;
 
     [ServiceContract]
     [AspNetCompatibilityRequirements(RequirementsMode = AspNetCompatibilityRequirementsMode.Required)]
@@ -44,7 +42,7 @@ namespace BPMSoft.Configuration
             }
         }
 
-        private string AuthorName 
+        private string AuthorName
         {
             get
             {
@@ -80,7 +78,8 @@ namespace BPMSoft.Configuration
 
         public IGitClient GitCliClient { get => _gitCliClient; set => _gitCliClient = value; }
 
-        public KnCommiterService() : base() {
+        public KnCommiterService() : base()
+        {
             GitCliClient = new GitCliClient();
         }
 
@@ -92,7 +91,7 @@ namespace BPMSoft.Configuration
         [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
         public string Ping()
         {
-            return "Pong";
+            return "Pong 2025/10/08/v01";
         }
 
         [OperationContract]
@@ -132,6 +131,7 @@ namespace BPMSoft.Configuration
             try
             {
                 await GitCliClient.AddAsync(RepositoryPath, changes);
+                await GitCliClient.CommitAsync(RepositoryPath, message, AuthorName, AuthorEmail);
                 return "ok";
             }
             catch (Exception ex)
