@@ -14,6 +14,7 @@ namespace BPMSoft.Configuration
         Task PullFastForwardAsync(string directoryPath, string remote, string branch, CancellationToken ct = default(CancellationToken));
         Task AddAllAndCommitAsync(string directoryPath, string message, string authorName, string authorEmail, CancellationToken ct = default(CancellationToken));
         Task AddAsync(string directoryPath, IEnumerable<string> paths, CancellationToken ct = default(CancellationToken));
+        Task CommitAsync(string directoryPath, string message, string authorName, string authorEmail, CancellationToken ct = default(CancellationToken));
         Task PushAsync(string directoryPath, string remote, string branch, CancellationToken ct = default(CancellationToken));
         Task<IReadOnlyList<RemoteInfo>> GetRemotesAsync(string workdir, CancellationToken ct = default(CancellationToken));
         Task<TrackingInfo> GetUpstreamAsync(string workdir, CancellationToken ct = default(CancellationToken));

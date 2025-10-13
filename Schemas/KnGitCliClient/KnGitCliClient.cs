@@ -109,7 +109,20 @@ namespace BPMSoft.Configuration
         public async Task AddAllAndCommitAsync(string directoryPath, string message, string authorName, string authorEmail, CancellationToken ct = default(CancellationToken))
         {
             await _executor.RunAsync(directoryPath, "add --all", null, ct, false).ConfigureAwait(false);
+            await CommitAsync(directoryPath, message, authorName, authorEmail, ct).ConfigureAwait(false);
+        }
 
+        /// <summary>
+        /// Создает коммит
+        /// </summary>
+        /// <param name="directoryPath">Путь до каталога</param>
+        /// <param name="message">Сообщение коммита</param>
+        /// <param name="authorName">Автор</param>
+        /// <param name="authorEmail">Email автора</param>
+        /// <param name="ct">Токен отмены</param>
+        /// <returns></returns>
+        public async Task CommitAsync(string directoryPath, string message, string authorName, string authorEmail, CancellationToken ct = default(CancellationToken))
+        {
             var env = new Dictionary<string, string>();
             if (!string.IsNullOrEmpty(authorName)) env["GIT_AUTHOR_NAME"] = authorName;
             if (!string.IsNullOrEmpty(authorEmail)) env["GIT_AUTHOR_EMAIL"] = authorEmail;
