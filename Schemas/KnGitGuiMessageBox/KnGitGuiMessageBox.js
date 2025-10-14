@@ -72,7 +72,10 @@ define("KnGitGuiMessageBox", [
 
 			this.addEvents("commitPrepared");
 
-			this.message = "Зафиксируйте изменения";
+			this.message =
+				this.message.length > 0
+					? this.message
+					: "Зафиксируйте изменения";
 		},
 
 		/**

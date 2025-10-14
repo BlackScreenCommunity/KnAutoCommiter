@@ -24,7 +24,7 @@ define("KnGitGuiMixin", [
 		}),
 
 		showModalBox: function () {
-			var callback = function (data) {
+			var callback = function (data, log) {
 				if (data && data.getCount() >= 0) {
 					var gridConfig = this.getGridConfig();
 
@@ -43,6 +43,7 @@ define("KnGitGuiMixin", [
 							{
 								id: "KnGitGuiMessageBox",
 								handler: handler,
+								message: log,
 								handlerScope: this,
 								gridData: data,
 								gridConfig: gridConfig,
@@ -120,11 +121,17 @@ define("KnGitGuiMixin", [
 				"KnCommiterService",
 				"GetRepoStatus",
 				function (response) {
-					if (response && response.GetRepoStatusResult) {
+					if (
+						response &&
+						response.GetRepoStatusResult &&
+						response.GetRepoStatusResult.Status &&
+						response.GetRepoStatusResult.Log
+					) {
 						let gridContent = this.prepareGridData(
-							response.GetRepoStatusResult,
+							response.GetRepoStatusResult.Status,
 						);
-						Ext.callback(callback, this, [gridContent]);
+						let log = response.GetRepoStatusResult.Log.join("");
+						Ext.callback(callback, this, [gridContent, log]);
 					}
 				},
 				{},
