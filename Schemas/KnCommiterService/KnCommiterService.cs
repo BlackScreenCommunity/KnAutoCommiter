@@ -6,6 +6,8 @@ namespace BPMSoft.Configuration
     using BPMSoft.Web.Common;
     using System;
     using System.Collections.Generic;
+    using System.Linq;
+    using System.Runtime.Serialization;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
     using System.ServiceModel.Web;
@@ -111,16 +113,38 @@ namespace BPMSoft.Configuration
 
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
-        public async Task<string> GetRepoStatus()
+        public async Task<StatusDTO> GetRepoStatus()
         {
             try
             {
-                string result = await GitCliClient.StatusPorcelainAsync(RepositoryPath);
-                return result;
+                string status = await GitCliClient.StatusPorcelainAsync(RepositoryPath);
+                var log = await GitCliClient.GetLog(RepositoryPath);
+                Console.WriteLine(string.Join("# ", log.ToArray()));
+                return new StatusDTO()
+                {
+                    Status = status,
+                    Log = log.ToArray()
+                };
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return new StatusDTO();
+            }
+        }
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
+        public async Task<string[]> GetLog()
+        {
+            try
+            {
+                var result = await GitCliClient.GetLog(RepositoryPath);
+
+                return result.ToArray();
+            }
+            catch (Exception ex)
+            {
+                return new string [] { ex.Message };
             }
         }
 
@@ -187,5 +211,15 @@ namespace BPMSoft.Configuration
                         .IsEqual(Column.Const(sysSettingCode)) as Select)
                     .ExecuteScalar<Guid>();
         }
+    }
+
+    [DataContract]
+    public class StatusDTO
+    {
+        [DataMember]
+        public string Status;
+
+        [DataMember]
+        public string[] Log;
     }
 }

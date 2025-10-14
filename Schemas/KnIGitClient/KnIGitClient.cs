@@ -19,5 +19,6 @@ namespace BPMSoft.Configuration
         Task<IReadOnlyList<RemoteInfo>> GetRemotesAsync(string workdir, CancellationToken ct = default(CancellationToken));
         Task<TrackingInfo> GetUpstreamAsync(string workdir, CancellationToken ct = default(CancellationToken));
         Task<TrackingInfo> GetPushRemoteAsync(string workdir, CancellationToken ct = default(CancellationToken));
+        Task<IReadOnlyList<string>> GetLog(string directoryPath, CancellationToken ct = default(CancellationToken));
     }
 }

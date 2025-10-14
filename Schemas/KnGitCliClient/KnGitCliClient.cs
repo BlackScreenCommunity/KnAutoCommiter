@@ -297,6 +297,24 @@ namespace BPMSoft.Configuration
             return new TrackingInfo(null, null);
         }
 
+        public async Task<IReadOnlyList<string>> GetLog(string directoryPath, CancellationToken ct = default(CancellationToken))
+        {
+            var output = await _executor.RunAsync(directoryPath, "log -n 10 --date=relative --graph --oneline", null, ct, /*acceptNonZeroExit*/ true)
+                .ConfigureAwait(false);
+
+            if (string.IsNullOrWhiteSpace(output))
+                return Array.Empty<string>();
+
+            var lines = output
+                .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(l => l.Trim())
+                .Where(l => !string.IsNullOrEmpty(l))
+                .Take(10)
+                .ToArray();
+
+            return lines.Length == 0 ? (IReadOnlyList<string>)Array.Empty<string>() : lines;
+        }
+
 
         private static string EscapeString(string s)
         {
@@ -428,6 +446,8 @@ namespace BPMSoft.Configuration
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
+                StandardOutputEncoding = Encoding.UTF8,
+                StandardErrorEncoding = Encoding.UTF8,
                 CreateNoWindow = true
             };
 
