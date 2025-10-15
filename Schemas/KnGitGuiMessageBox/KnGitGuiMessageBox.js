@@ -16,6 +16,13 @@ define("KnGitGuiMessageBox", [
 		 */
 		message: "",
 
+		logContainerMessage: "Последние изменения",
+
+		/**
+		 * Журнал изменений git log
+		 */
+		log: [],
+
 		/**
 		 * Признак видимости модального окна
 		 */
@@ -103,6 +110,7 @@ define("KnGitGuiMessageBox", [
 			this.callParent(arguments);
 			this.initgrid();
 			this.initcommitMessageBox();
+			this.initGitLogLabels();
 			this.adjustDialog();
 		},
 
@@ -113,6 +121,7 @@ define("KnGitGuiMessageBox", [
 			this.callParent(arguments);
 			this.initgrid();
 			this.initcommitMessageBox();
+			this.initGitLogLabels();
 			this.adjustDialog();
 		},
 
@@ -124,6 +133,8 @@ define("KnGitGuiMessageBox", [
 				'<div id="{id}-cover" class="{coverClass}"></div>',
 				'<div id="{id}-wrap" class="{boxClass}">',
 				'<div id="{id}-caption" class="{captionClass}">{caption}</div>',
+				'<div id="{id}-log-container-header" class="{log-container-header}">{logContainerMessage}</div>',
+				'<div id="{id}-log-container" class="{log-container}"></div>',
 				'<div id="{id}-message" class="{messageClass} {messageColorClass}">{message}</div>',
 				'<div id="{id}-grid" class="{gridClass}"></div>',
 				'<div id="kn-dialog-btns" class="{buttonsClass}">',
@@ -181,6 +192,7 @@ define("KnGitGuiMessageBox", [
 			var tplData = this.callParent(arguments);
 			tplData.caption = this.caption;
 			tplData.message = this.message;
+			tplData.logContainerMessage = this.logContainerMessage;
 			Ext.apply(tplData, this.getCssClasses());
 			return tplData;
 		},
@@ -282,6 +294,7 @@ define("KnGitGuiMessageBox", [
 			if (gridElement) {
 				gridElement.destroy();
 			}
+
 			var gridContainer = Ext.get(this.id + "-grid");
 			var gridConfig = Ext.apply(this.gridConfig, {
 				collection: {
@@ -294,6 +307,23 @@ define("KnGitGuiMessageBox", [
 			this.grid.bind(model);
 			var collection = model.get("Collection");
 			collection.loadAll(this.gridData);
+		},
+
+		/**
+		 * Инициализируе компонент поля для ввода причины отказа
+		 */
+		initGitLogLabels: function () {
+			var textBoxContainer = Ext.get(this.id + "-log-container");
+
+			this.log.forEach(function (gitLogItem) {
+				let gitLogItemLabel = Ext.create("BPMSoft.Label", {
+					caption: gitLogItem,
+					renderTo: textBoxContainer,
+					classes: {
+						labelClass: ["kn-log-status-item"],
+					},
+				});
+			});
 		},
 
 		/**

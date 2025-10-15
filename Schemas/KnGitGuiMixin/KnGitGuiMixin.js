@@ -43,7 +43,7 @@ define("KnGitGuiMixin", [
 							{
 								id: "KnGitGuiMessageBox",
 								handler: handler,
-								message: log,
+								log: log,
 								handlerScope: this,
 								gridData: data,
 								gridConfig: gridConfig,
@@ -130,8 +130,10 @@ define("KnGitGuiMixin", [
 						let gridContent = this.prepareGridData(
 							response.GetRepoStatusResult.Status,
 						);
-						let log = response.GetRepoStatusResult.Log.join("");
-						Ext.callback(callback, this, [gridContent, log]);
+						Ext.callback(callback, this, [
+							gridContent,
+							response.GetRepoStatusResult.Log,
+						]);
 					}
 				},
 				{},
