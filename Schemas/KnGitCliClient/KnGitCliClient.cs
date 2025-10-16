@@ -299,7 +299,7 @@ namespace BPMSoft.Configuration
 
         public async Task<IReadOnlyList<string>> GetLog(string directoryPath, CancellationToken ct = default(CancellationToken))
         {
-            var output = await _executor.RunAsync(directoryPath, "log -n 10 --date=relative --graph --oneline", null, ct, /*acceptNonZeroExit*/ true)
+            var output = await _executor.RunAsync(directoryPath, "log -n 10 --date=relative  --pretty=format:'%s (%cd)' --graph", null, ct, /*acceptNonZeroExit*/ true)
                 .ConfigureAwait(false);
 
             if (string.IsNullOrWhiteSpace(output))
