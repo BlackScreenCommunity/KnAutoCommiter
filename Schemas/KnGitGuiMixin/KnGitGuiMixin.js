@@ -51,6 +51,7 @@ define("KnGitGuiMixin", [
 						);
 					} else {
 						this.messageBoxInstance.gridData = data;
+						this.messageBoxInstance.log = log;
 					}
 
 					this.messageBoxInstance.on(
