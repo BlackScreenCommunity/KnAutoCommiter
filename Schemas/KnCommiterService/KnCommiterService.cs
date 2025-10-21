@@ -119,7 +119,6 @@ namespace BPMSoft.Configuration
             {
                 string status = await GitCliClient.StatusPorcelainAsync(RepositoryPath);
                 var log = await GitCliClient.GetLog(RepositoryPath);
-                Console.WriteLine(string.Join("# ", log.ToArray()));
                 return new StatusDTO()
                 {
                     Status = status,
