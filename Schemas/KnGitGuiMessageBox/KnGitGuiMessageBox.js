@@ -78,6 +78,7 @@ define("KnGitGuiMessageBox", [
 			this.selectors = this.getSelectors();
 
 			this.addEvents("commitPrepared");
+			this.addEvents("push");
 
 			this.message =
 				this.message.length > 0
@@ -215,6 +216,18 @@ define("KnGitGuiMessageBox", [
 			};
 			buttonsArray.push(commitButtonConfig);
 
+			var pushButtonConfig = {
+				id: "GitGuiMessageBoxPushButton",
+				className: "BPMSoft.Button",
+				caption: "Отправить изменения на сервер",
+				markerValue: "push",
+				returnCode: "push",
+				style: "transparent",
+				imageConfig: this.getButtonImageConfig("CommitButtonIcon"),
+				handler: this.onMessageBoxPushButtonClick.bind(this),
+			};
+			buttonsArray.push(pushButtonConfig);
+
 			var closeButton = {
 				id: "CloseMessageBoxButton",
 				className: "BPMSoft.Button",
@@ -257,6 +270,13 @@ define("KnGitGuiMessageBox", [
 
 				this.fireEvent("commitPrepared", commit);
 			}
+		},
+
+		/**
+		 * Обработчик нажатия на кнопку "Отправить изменения на сервер"
+		 */
+		onMessageBoxPushButtonClick: function () {
+			this.fireEvent("push");
 		},
 
 		/**

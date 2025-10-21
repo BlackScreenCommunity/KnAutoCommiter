@@ -59,6 +59,8 @@ define("KnGitGuiMixin", [
 						this.applyCommit,
 						this,
 					);
+					this.messageBoxInstance.on("push", this.pushChanges, this);
+
 					if (this.messageBoxInstance.visible) {
 						this.messageBoxInstance.initgrid();
 					} else {
@@ -81,6 +83,10 @@ define("KnGitGuiMixin", [
 				commit,
 				this,
 			);
+		},
+
+		pushChanges: function () {
+			debugger;
 		},
 
 		prepareGridData: function (gitStatusInfo) {
