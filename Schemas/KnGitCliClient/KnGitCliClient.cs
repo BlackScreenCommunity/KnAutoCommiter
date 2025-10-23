@@ -315,6 +315,17 @@ namespace BPMSoft.Configuration
             return lines.Length == 0 ? (IReadOnlyList<string>)Array.Empty<string>() : lines;
         }
 
+        public async Task<int> GetCountOfCommitsToPush(string directoryPath, CancellationToken ct = default)
+        {
+            var output = await _executor.RunAsync(directoryPath, "rev-list--count origin/$(git rev - parse--abbrev - ref HEAD)..HEAD", null, ct, /*acceptNonZeroExit*/ true)
+                .ConfigureAwait(false);
+
+            if (int.TryParse(output, out int count)) {
+                return count;
+            } else {
+                return 0;
+            }
+        }
 
         private static string EscapeString(string s)
         {
@@ -358,6 +369,7 @@ namespace BPMSoft.Configuration
             if (path.EndsWith("/", StringComparison.Ordinal) || path.EndsWith("\\", StringComparison.Ordinal)) return path;
             return path + Path.DirectorySeparatorChar;
         }
+
     }
 
 
