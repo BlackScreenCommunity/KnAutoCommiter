@@ -58,11 +58,10 @@
 }
 
 .kn-dialog-buttons {
-	height: 20em;
 	display: flex;
+	flex-direction: row;
 	justify-content: flex-end;
 	align-items: flex-end;
-	flex-direction: column;
 }
 
 #grid-kn-commit-message-grid-wrap:before {
@@ -130,4 +129,8 @@
 .kn-log-status-item:hover {
   background-color: var(--field-underline);
   border-left-color: rgb(249, 118, 61);
+}
+
+#commit-message-memo-edit-scroll {
+	max-height: 5em;
 }

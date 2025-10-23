@@ -23,6 +23,8 @@ define("KnGitGuiMessageBox", [
 		 */
 		log: [],
 
+		countOfCommitsToPush: 0,
+
 		/**
 		 * Признак видимости модального окна
 		 */
@@ -138,8 +140,8 @@ define("KnGitGuiMessageBox", [
 				'<div id="{id}-log-container" class="{log-container}"></div>',
 				'<div id="{id}-message" class="{messageClass} {messageColorClass}">{message}</div>',
 				'<div id="{id}-grid" class="{gridClass}"></div>',
-				'<div id="kn-dialog-btns" class="{buttonsClass}">',
 				'<div id="{id}-commit-message-text-box" class="{commitMessageTextBox}"></div>',
+				'<div id="kn-dialog-btns" class="{buttonsClass}"></dev>',
 				'<tpl for="items">',
 				"<@item>",
 				"</tpl>",
