@@ -163,6 +163,23 @@ namespace BPMSoft.Configuration
             }
         }
 
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
+        public async Task<string> Push()
+        {
+            try
+            {
+                var remoteInfo = await GitCliClient.GetPushRemoteAsync(RepositoryPath);
+
+                await GitCliClient.PushAsync(RepositoryPath, remoteInfo.Remote, remoteInfo.Branch);
+                return "ok";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
         private async Task<string> DoFullGitSyncIteration()
         {
             var gitStatus = await GitCliClient.StatusPorcelainAsync(RepositoryPath);

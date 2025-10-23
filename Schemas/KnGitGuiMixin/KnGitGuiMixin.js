@@ -73,7 +73,6 @@ define("KnGitGuiMixin", [
 		},
 
 		applyCommit: function (commit) {
-			console.log(commit);
 			ServiceHelper.callService(
 				"KnCommiterService",
 				"AddAndCommitChanges",
@@ -86,7 +85,15 @@ define("KnGitGuiMixin", [
 		},
 
 		pushChanges: function () {
-			debugger;
+			ServiceHelper.callService(
+				"KnCommiterService",
+				"Push",
+				function () {
+					this.showModalBox();
+				},
+				commit,
+				this,
+			);
 		},
 
 		prepareGridData: function (gitStatusInfo) {
