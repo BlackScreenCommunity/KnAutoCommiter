@@ -91,7 +91,7 @@ define("KnGitGuiMixin", [
 				function () {
 					this.showModalBox();
 				},
-				commit,
+				{},
 				this,
 			);
 		},
