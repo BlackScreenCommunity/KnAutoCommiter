@@ -24,7 +24,7 @@ define("KnGitGuiMixin", [
 		}),
 
 		showModalBox: function () {
-			var callback = function (data, log) {
+			var callback = function (data, log, countOfCommitsToPush) {
 				if (data && data.getCount() >= 0) {
 					var gridConfig = this.getGridConfig();
 
@@ -44,6 +44,7 @@ define("KnGitGuiMixin", [
 								id: "KnGitGuiMessageBox",
 								handler: handler,
 								log: log,
+								countOfCommitsToPush: countOfCommitsToPush,
 								handlerScope: this,
 								gridData: data,
 								gridConfig: gridConfig,
@@ -52,6 +53,8 @@ define("KnGitGuiMixin", [
 					} else {
 						this.messageBoxInstance.gridData = data;
 						this.messageBoxInstance.log = log;
+						this.messageBoxInstance.countOfCommitsToPush =
+							countOfCommitsToPush;
 					}
 
 					this.messageBoxInstance.on(

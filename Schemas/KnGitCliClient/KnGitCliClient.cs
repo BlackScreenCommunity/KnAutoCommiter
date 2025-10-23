@@ -317,14 +317,27 @@ namespace BPMSoft.Configuration
 
         public async Task<int> GetCountOfCommitsToPush(string directoryPath, CancellationToken ct = default)
         {
-            var output = await _executor.RunAsync(directoryPath, "rev-list--count origin/$(git rev - parse--abbrev - ref HEAD)..HEAD", null, ct, /*acceptNonZeroExit*/ true)
+            var output = await GetCommitsToPush(directoryPath, ct);
+
+            return output.Count;
+        }
+
+        private async Task<IReadOnlyList<string>> GetCommitsToPush(string directoryPath, CancellationToken ct = default)
+        {
+            var output = await _executor.RunAsync(directoryPath, "log \"@{u}..\" --oneline", null, ct, /*acceptNonZeroExit*/ true)
                 .ConfigureAwait(false);
 
-            if (int.TryParse(output, out int count)) {
-                return count;
-            } else {
-                return 0;
-            }
+            if (string.IsNullOrWhiteSpace(output))
+                return Array.Empty<string>();
+
+            var lines = output
+                .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(l => l.Trim())
+                .Where(l => !string.IsNullOrEmpty(l))
+                .Take(10)
+                .ToArray();
+
+            return lines.Length == 0 ? (IReadOnlyList<string>)Array.Empty<string>() : lines;
         }
 
         private static string EscapeString(string s)

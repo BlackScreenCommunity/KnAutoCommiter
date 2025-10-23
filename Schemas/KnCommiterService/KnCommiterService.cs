@@ -119,10 +119,13 @@ namespace BPMSoft.Configuration
             {
                 string status = await GitCliClient.StatusPorcelainAsync(RepositoryPath);
                 var log = await GitCliClient.GetLog(RepositoryPath);
+                var commitsToPushCount = await GitCliClient.GetCountOfCommitsToPush(RepositoryPath);
+
                 return new StatusDTO()
                 {
                     Status = status,
-                    Log = log.ToArray()
+                    Log = log.ToArray(),
+                    CommitsToPushCount = commitsToPushCount
                 };
             }
             catch (Exception ex)
@@ -237,5 +240,8 @@ namespace BPMSoft.Configuration
 
         [DataMember]
         public string[] Log;
+
+        [DataMember]
+        public int CommitsToPushCount;
     }
 }
