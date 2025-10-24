@@ -337,6 +337,8 @@ define("KnGitGuiMessageBox", [
 		initGitLogLabels: function () {
 			var textBoxContainer = Ext.get(this.id + "-log-container");
 
+			textBoxContainer.setHTML("");
+
 			this.log.forEach(function (gitLogItem) {
 				let gitLogItemLabel = Ext.create("BPMSoft.Label", {
 					caption: gitLogItem,

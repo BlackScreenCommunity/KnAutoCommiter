@@ -66,6 +66,7 @@ define("KnGitGuiMixin", [
 
 					if (this.messageBoxInstance.visible) {
 						this.messageBoxInstance.initgrid();
+						this.messageBoxInstance.initGitLogLabels();
 					} else {
 						this.messageBoxInstance.show();
 					}
