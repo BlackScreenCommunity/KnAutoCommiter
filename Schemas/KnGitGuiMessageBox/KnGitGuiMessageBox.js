@@ -225,7 +225,7 @@ define("KnGitGuiMessageBox", [
 				markerValue: "push",
 				returnCode: "push",
 				style: "transparent",
-				imageConfig: this.getButtonImageConfig("CommitButtonIcon"),
+				imageConfig: this.getButtonImageConfig("PushButtonIcon"),
 				handler: this.onMessageBoxPushButtonClick.bind(this),
 			};
 			buttonsArray.push(pushButtonConfig);
