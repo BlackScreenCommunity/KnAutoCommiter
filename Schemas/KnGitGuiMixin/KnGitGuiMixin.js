@@ -148,15 +148,31 @@ define("KnGitGuiMixin", [
 						let gridContent = this.prepareGridData(
 							response.GetRepoStatusResult.Status,
 						);
+
+						let formattedLog = this.formatLog(
+							response.GetRepoStatusResult.Log,
+						);
 						Ext.callback(callback, this, [
 							gridContent,
-							response.GetRepoStatusResult.Log,
+							formattedLog,
 						]);
 					}
 				},
 				{},
 				this,
 			);
+		},
+
+		formatLog: function (logLines) {
+			let result = logLines
+				.map((x) => x.replaceAll("seconds ago", "секунд назад"))
+				.map((x) => x.replaceAll("minutes ago", "минут назад"))
+				.map((x) => x.replaceAll("hours ago", "часов назад"))
+				.map((x) => x.replaceAll("days ago", "дней назад"))
+				.map((x) => x.replaceAll("weeks ago", "недель назад"))
+				.map((x) => x.replaceAll("months ago", "месяцев назад"))
+				.map((x) => x.replaceAll("years ago", "лет назад"));
+			return result;
 		},
 
 		/**
