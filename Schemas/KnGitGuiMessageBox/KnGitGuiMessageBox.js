@@ -137,11 +137,11 @@ define("KnGitGuiMessageBox", [
 				'<div id="{id}-wrap" class="{boxClass}">',
 				'<div id="{id}-caption" class="{captionClass}">{caption}</div>',
 				'<div id="{id}-log-container-header" class="{messageClass}">{logContainerMessage}</div>',
-				'<div id="{id}-log-container" class="{log-container}"></div>',
+				'<div id="{id}-log-container" class="{log-container}" data-tour="last"></div>',
 				'<div id="{id}-message" class="{messageClass} {messageColorClass}">{message}</div>',
-				'<div id="{id}-grid" class="{gridClass}"></div>',
-				'<div id="{id}-commit-message-text-box" class="{commitMessageTextBox}"></div>',
-				'<div id="kn-dialog-btns" class="{buttonsClass}"></dev>',
+				'<div id="{id}-grid" class="{gridClass}" data-tour="unstaged"></div>',
+				'<div id="{id}-commit-message-text-box" class="{commitMessageTextBox}" data-tour="message"></div>',
+				'<div id="kn-dialog-btns" class="{buttonsClass}" data-tour="buttons"></dev>',
 				'<tpl for="items">',
 				"<@item>",
 				"</tpl>",
@@ -233,7 +233,6 @@ define("KnGitGuiMessageBox", [
 			var closeButton = {
 				id: "CloseMessageBoxButton",
 				className: "BPMSoft.Button",
-				// caption: "Закрыть",
 				markerValue: "close",
 				returnCode: "close",
 				imageConfig: this.getButtonImageConfig("CloseButtonIcon"),
@@ -241,7 +240,153 @@ define("KnGitGuiMessageBox", [
 			};
 			buttonsArray.push(closeButton);
 
+			var helpButton = {
+				id: "HelpButton",
+				className: "BPMSoft.Button",
+				markerValue: "help",
+				returnCode: "help",
+				imageConfig: this.getButtonImageConfig("CloseButtonIcon"),
+				handler: this.onHelpButtonClick.bind(this),
+			};
+			buttonsArray.push(helpButton);
+
 			return buttonsArray;
+		},
+
+		/**
+		 * Обработчик нажатия на кнопку "Помощь"
+		 *
+		 * Запускает интерактивное обучение с подсветкой основных
+		 * интрефейсов модального окна.
+		 * У каждого блока обучения имеется свое описание
+		 */
+		onHelpButtonClick: function () {
+			const modal = document.getElementById("KnGitGuiMessageBox-wrap");
+
+			const steps = [
+				{
+					selector: '[data-tour="last"]',
+					text: "<b>Отображает список последних зафиксированных изменений</b>. Отображается описание и дата фиксации",
+					pos: "bottom",
+				},
+				{
+					selector: '[data-tour="unstaged"]',
+					text: "<b>Незафиксированные изменения</b>. Выбери файлы, в которые вносил изменения.",
+					pos: "bottom",
+				},
+				{
+					selector: '[data-tour="message"]',
+					text: "<b>Сообщение коммита</b>. Укажи номер задачи, в рамках которой работал и опиши какие изменения вносил. Чем меньше в изменений в одном коммите - тем проще потом с ними работать. Их можно отдельно откатывать, переносить на другие стенды и релизить.",
+					pos: "top",
+				},
+				{
+					selector: '[data-tour="buttons"]',
+					text: "<b>Сделать коммит</b> — <i>Упаковывем</i> изменения и готовим их к отправке. <br/> Для того, чтобы сделать коммит обязательно нужно выбрать хотя бы один файл, и указать сообщение коммита. После нажатия на кнопку коммит будет отображен в списке Последних изменений <br/><br/>  <b>Отправить изменения на сервер</b> публикует изменения, после чего они будут доступны для других участников команды. Публикация гарантирует нам, что отправленные изменения не будут потеряны, если с нашим стендом что-то произойдет.",
+					pos: "top",
+				},
+			];
+
+			const layer = document.createElement("div");
+			layer.className = "tour-layer";
+			layer.innerHTML = `
+				<div class="tour-backdrop" aria-hidden="true"></div>
+				<div class="tour-spotlight" role="presentation"></div>
+				<div class="tour-popover pos-bottom" role="dialog" aria-live="polite" aria-modal="false">
+				  <div class="tour-content"></div>
+				  <div class="tour-controls">
+					<button class="secondary" data-act="prev">Назад</button>
+					<button class="primary" data-act="next">Далее</button>
+				  </div>
+				</div>
+			  `;
+
+			modal.appendChild(layer);
+
+			const spotlight = layer.querySelector(".tour-spotlight");
+			const popover = layer.querySelector(".tour-popover");
+			const content = layer.querySelector(".tour-content");
+			const btnPrev = layer.querySelector('[data-act="prev"]');
+			const btnNext = layer.querySelector('[data-act="next"]');
+
+			let i = 0;
+
+			function clampIntoModal(rect) {
+				const m = modal.getBoundingClientRect();
+				return {
+					top: rect.top - m.top,
+					left: rect.left - m.left,
+					width: rect.width,
+					height: rect.height,
+				};
+			}
+
+			function place(step) {
+				const el = modal.querySelector(step.selector);
+				if (!el) {
+					next();
+					return;
+				}
+
+				el.scrollIntoView({ block: "nearest", behavior: "smooth" });
+
+				const r = clampIntoModal(el.getBoundingClientRect());
+
+				spotlight.style.top = r.top - 8 + "px";
+				spotlight.style.left = r.left - 8 + "px";
+				spotlight.style.width = r.width + 16 + "px";
+				spotlight.style.height = r.height + 16 + "px";
+
+				content.innerHTML = step.text;
+
+				popover.classList.remove("pos-top", "pos-bottom");
+				popover.classList.add(
+					step.pos === "top" ? "pos-top" : "pos-bottom",
+				);
+
+				const gap = 10;
+				const pv = popover.getBoundingClientRect();
+				const top =
+					step.pos === "top"
+						? r.top - pv.height - 16 - gap
+						: r.top + r.height + 16 + gap;
+				const left = Math.max(
+					8,
+					Math.min(r.left, modal.clientWidth - pv.width - 8),
+				);
+
+				popover.style.top = top + "px";
+				popover.style.left = left + "px";
+
+				btnPrev.disabled = i === 0;
+				btnNext.textContent =
+					i === steps.length - 1 ? "Готово" : "Далее";
+			}
+
+			function next() {
+				if (i < steps.length - 1) {
+					i++;
+					place(steps[i]);
+				} else {
+					end();
+				}
+			}
+			function prev() {
+				if (i > 0) {
+					i--;
+					place(steps[i]);
+				}
+			}
+			function end() {
+				layer.remove();
+			}
+
+			btnNext.addEventListener("click", next);
+			btnPrev.addEventListener("click", prev);
+			layer.addEventListener("click", (e) => {
+				if (!popover.contains(e.target)) next();
+			});
+
+			place(steps[i]);
 		},
 
 		/**
