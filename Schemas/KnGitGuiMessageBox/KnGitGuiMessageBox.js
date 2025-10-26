@@ -76,7 +76,7 @@ define("KnGitGuiMessageBox", [
 		constructor: function () {
 			this.callParent(arguments);
 
-			this.caption = "GIT GUI";
+			this.caption = "Фиксация изменений";
 			this.selectors = this.getSelectors();
 
 			this.addEvents("commitPrepared");
@@ -85,7 +85,7 @@ define("KnGitGuiMessageBox", [
 			this.message =
 				this.message.length > 0
 					? this.message
-					: "Зафиксируйте изменения";
+					: "Незафиксированные изменения";
 		},
 
 		/**
@@ -136,7 +136,7 @@ define("KnGitGuiMessageBox", [
 				'<div id="{id}-cover" class="{coverClass}"></div>',
 				'<div id="{id}-wrap" class="{boxClass}">',
 				'<div id="{id}-caption" class="{captionClass}">{caption}</div>',
-				'<div id="{id}-log-container-header" class="{log-container-header}">{logContainerMessage}</div>',
+				'<div id="{id}-log-container-header" class="{messageClass}">{logContainerMessage}</div>',
 				'<div id="{id}-log-container" class="{log-container}"></div>',
 				'<div id="{id}-message" class="{messageClass} {messageColorClass}">{message}</div>',
 				'<div id="{id}-grid" class="{gridClass}"></div>',
@@ -359,7 +359,7 @@ define("KnGitGuiMessageBox", [
 			);
 
 			this.commitMessageBoxLabel = Ext.create("BPMSoft.Label", {
-				caption: Resources.localizableStrings.RejectingReasonCaption,
+				caption: "Опишите изменения и укажите номер задачи",
 				renderTo: textBoxContainer,
 				classes: {
 					labelClass: ["kn-dialog-message", "an-display-contents"],
