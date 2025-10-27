@@ -3,10 +3,12 @@ namespace BPMSoft.Configuration
     using BPMSoft.Common;
     using BPMSoft.Core;
     using BPMSoft.Core.DB;
+    using BPMSoft.Core.Packages;
     using BPMSoft.Web.Common;
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Reflection;
     using System.Runtime.Serialization;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
@@ -94,6 +96,7 @@ namespace BPMSoft.Configuration
         public string Ping()
         {
             return "Pong 2025/10/08/v01";
+
         }
 
         [OperationContract]
@@ -146,7 +149,7 @@ namespace BPMSoft.Configuration
             }
             catch (Exception ex)
             {
-                return new string [] { ex.Message };
+                return new string[] { ex.Message };
             }
         }
 
@@ -176,6 +179,33 @@ namespace BPMSoft.Configuration
 
                 await GitCliClient.PushAsync(RepositoryPath, remoteInfo.Remote, remoteInfo.Branch);
                 return "ok";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
+        public async Task<string> SyncChangesWithFileSystem()
+        {
+            try
+            {
+                var instance = new PackageInstallUtilities(SystemUserConnection);
+                var type = typeof(PackageInstallUtilities);
+                var method = type.GetMethod(
+                    "LoadPackagesToFileSystem",
+                    BindingFlags.NonPublic | BindingFlags.Instance
+                    );
+
+                var result = method.Invoke(instance, new object[] { null, true });
+
+                var resultType = result.GetType();
+                var status = resultType.GetProperty("HasChanges", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                                       ?.GetValue(result);
+
+                return status.ToString();
             }
             catch (Exception ex)
             {
