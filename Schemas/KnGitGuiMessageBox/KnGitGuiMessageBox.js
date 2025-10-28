@@ -245,7 +245,7 @@ define("KnGitGuiMessageBox", [
 				className: "BPMSoft.Button",
 				markerValue: "help",
 				returnCode: "help",
-				imageConfig: this.getButtonImageConfig("CloseButtonIcon"),
+				imageConfig: this.getButtonImageConfig("HelpButtonIcon"),
 				handler: this.onHelpButtonClick.bind(this),
 			};
 			buttonsArray.push(helpButton);
