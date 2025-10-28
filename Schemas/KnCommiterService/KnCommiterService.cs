@@ -3,12 +3,10 @@ namespace BPMSoft.Configuration
     using BPMSoft.Common;
     using BPMSoft.Core;
     using BPMSoft.Core.DB;
-    using BPMSoft.Core.Packages;
     using BPMSoft.Web.Common;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Reflection;
     using System.Runtime.Serialization;
     using System.ServiceModel;
     using System.ServiceModel.Activation;
@@ -133,7 +131,10 @@ namespace BPMSoft.Configuration
             }
             catch (Exception ex)
             {
-                return new StatusDTO();
+                return new StatusDTO()
+                {
+                    Status = ex.Message,
+                };
             }
         }
 
@@ -192,20 +193,10 @@ namespace BPMSoft.Configuration
         {
             try
             {
-                var instance = new PackageInstallUtilities(SystemUserConnection);
-                var type = typeof(PackageInstallUtilities);
-                var method = type.GetMethod(
-                    "LoadPackagesToFileSystem",
-                    BindingFlags.NonPublic | BindingFlags.Instance
-                    );
+                var configurationOperator = new BpmsoftConfigurationOperator(SystemUserConnection);
+                var hasDownloadedChanges = configurationOperator.DownloadChangesToFileSystem();
 
-                var result = method.Invoke(instance, new object[] { null, true });
-
-                var resultType = result.GetType();
-                var status = resultType.GetProperty("HasChanges", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
-                                       ?.GetValue(result);
-
-                return status.ToString();
+                return hasDownloadedChanges.ToString();
             }
             catch (Exception ex)
             {
