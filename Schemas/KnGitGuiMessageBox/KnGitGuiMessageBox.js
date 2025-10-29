@@ -81,6 +81,7 @@ define("KnGitGuiMessageBox", [
 
 			this.addEvents("commitPrepared");
 			this.addEvents("push");
+			this.addEvents("downloadToFS");
 
 			this.message =
 				this.message.length > 0
@@ -115,6 +116,7 @@ define("KnGitGuiMessageBox", [
 			this.initcommitMessageBox();
 			this.initGitLogLabels();
 			this.adjustDialog();
+			this.renderDownloadChangesToFSButton();
 		},
 
 		/**
@@ -126,6 +128,32 @@ define("KnGitGuiMessageBox", [
 			this.initcommitMessageBox();
 			this.initGitLogLabels();
 			this.adjustDialog();
+			this.renderDownloadChangesToFSButton();
+		},
+
+		/*
+		 * Добавить кнопку обновления
+		 * списка незафиксированных изменений
+		 * Выгрузка данных в файловую систему
+		 */
+		renderDownloadChangesToFSButton: function () {
+			let downloadChangesToFSContainer = Ext.get(
+				"KnGitGuiMessageBox-reload-button",
+			);
+
+			Ext.create("BPMSoft.Button", {
+				id: "GitGuiDownloadChangesToFSButton",
+				className: "BPMSoft.Button",
+				// caption: "Выгрузить изменения",
+				markerValue: "downloadToFS",
+				returnCode: "downloadToFS",
+				style: "transparent",
+				imageConfig: this.getButtonImageConfig(
+					"DownloadChangesToFSButton",
+				),
+				handler: this.onDownloadChangesToFSButtonClick.bind(this),
+				renderTo: downloadChangesToFSContainer,
+			});
 		},
 
 		/**
@@ -138,7 +166,10 @@ define("KnGitGuiMessageBox", [
 				'<div id="{id}-caption" class="{captionClass}">{caption}</div>',
 				'<div id="{id}-log-container-header" class="{messageClass}">{logContainerMessage}</div>',
 				'<div id="{id}-log-container" class="{log-container}" data-tour="last"></div>',
-				'<div id="{id}-message" class="{messageClass} {messageColorClass}">{message}</div>',
+				'<div class="header-with-button">',
+				'<div id="{id}-message" class="{messageClass}">{message}</div>',
+				'<div id="{id}-reload-button" class="{messageClass}" data-tour="download-changes-button"></div>',
+				"</div>",
 				'<div id="{id}-grid" class="{gridClass}" data-tour="unstaged"></div>',
 				'<div id="{id}-commit-message-text-box" class="{commitMessageTextBox}" data-tour="message"></div>',
 				'<div id="kn-dialog-btns" class="{buttonsClass}" data-tour="buttons"></dev>',
@@ -170,7 +201,6 @@ define("KnGitGuiMessageBox", [
 				captionClass: ["kn-dialog-caption"],
 				gridClass: ["kn-dialog-grid"],
 				messageClass: ["kn-dialog-message"],
-				messageColorClass: [],
 				buttonsClass: ["kn-dialog-buttons"],
 				commitMessageBoxClass: ["kn-commit-message-text-box"],
 			};
@@ -272,6 +302,11 @@ define("KnGitGuiMessageBox", [
 				{
 					selector: '[data-tour="unstaged"]',
 					text: "<b>Незафиксированные изменения</b>. Выбери файлы, в которые вносил изменения.",
+					pos: "bottom",
+				},
+				{
+					selector: '[data-tour="download-changes-button"]',
+					text: "<b>Кнопка выгрузки изменений из BPMSoft</b>. Если не видишь свои изменения, связанные с созданием новых объектов (например, привязки данных или процесса), нажми эту кнопку. <br/> Процесс может занять несколько минут, поэтому он не запускается автоматически при открытии окна.",
 					pos: "bottom",
 				},
 				{
@@ -417,6 +452,10 @@ define("KnGitGuiMessageBox", [
 
 				this.fireEvent("commitPrepared", commit);
 			}
+		},
+
+		onDownloadChangesToFSButtonClick: function () {
+			this.fireEvent("downloadChangesToFS");
 		},
 
 		/**
