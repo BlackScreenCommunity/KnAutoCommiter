@@ -556,6 +556,14 @@ define("KnGitGuiMessageBox", [
 			});
 		},
 
+		refreshCommitMessageBox: function () {
+			commitMessageBox = Ext.getCmp("commit-message-memo-edit");
+
+			if (commitMessageBox) {
+				commitMessageBox.setValue("");
+			}
+		},
+
 		/**
 		 * Обработчик уничтожения диалогового окна
 		 */

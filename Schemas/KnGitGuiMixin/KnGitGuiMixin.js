@@ -67,6 +67,7 @@ define("KnGitGuiMixin", [
 					if (this.messageBoxInstance.visible) {
 						this.messageBoxInstance.initgrid();
 						this.messageBoxInstance.initGitLogLabels();
+						this.messageBoxInstance.refreshCommitMessageBox();
 					} else {
 						this.messageBoxInstance.show();
 					}
@@ -142,7 +143,6 @@ define("KnGitGuiMixin", [
 					if (
 						response &&
 						response.GetRepoStatusResult &&
-						response.GetRepoStatusResult.Status &&
 						response.GetRepoStatusResult.Log
 					) {
 						let gridContent = this.prepareGridData(
