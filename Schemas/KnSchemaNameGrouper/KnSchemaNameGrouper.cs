@@ -1,4 +1,4 @@
-namespace BPMSoft.Configuration
+﻿namespace BPMSoft.Configuration
 {
     using System;
     using System.Collections.Generic;
@@ -6,7 +6,13 @@ namespace BPMSoft.Configuration
     using System.Linq;
     using System.Text.RegularExpressions;
 
-    public static class ChangeGrouper
+    /// <summary>
+    /// Логически группирует измененные файлы по "Схемам BPMSoft"
+    /// На вход принимает пути до файлов, которые были изменены
+    /// На выход возвращает название "Схемы" и набор файлов, которые 
+    /// ассоциированы с этой схемой
+    /// </summary>
+    public static class SchemaGrouper
     {
         private static readonly HashSet<string> PackageFolders =
             new HashSet<string>(StringComparer.OrdinalIgnoreCase)
@@ -16,57 +22,100 @@ namespace BPMSoft.Configuration
             new Regex(@"^(?<base>[^.]+)\.(Process|ClientUnit|Entity|SourceCode)$",
                       RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-        public static IReadOnlyList<GroupedFiles> GroupUnified(IEnumerable<string> changedPaths)
+        public static IReadOnlyList<Schema> Group(IEnumerable<string> changedPaths)
         {
-            var byName = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
+            var schemaWithFiles = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (var raw in changedPaths ?? Enumerable.Empty<string>())
+            foreach (var filePath in changedPaths ?? Enumerable.Empty<string>())
             {
-                if (string.IsNullOrWhiteSpace(raw)) continue;
-
-                var norm = raw.Replace('\\', Path.DirectorySeparatorChar)
-                              .Replace('/', Path.DirectorySeparatorChar);
-
-                var segments = norm.Split(new[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
-
-                var packageFolderInfo = FindPackageFolder(segments);
-                string name;
-
-                if (packageFolderInfo.idx < 0 || packageFolderInfo.idx + 1 >= segments.Length)
+                if (string.IsNullOrWhiteSpace(filePath))
                 {
-                    name = "Other";
-                }
-                else
-                {
-                    var schemaFolder = segments[packageFolderInfo.idx + 1];
-                    name = Canonicalize(packageFolderInfo.packageFolder, schemaFolder);
+                    continue;
                 }
 
-                List<string> files;
-                if (!byName.TryGetValue(name, out files))
-                {
-                    files = new List<string>();
-                    byName[name] = files;
-                }
-
-                if (!files.Any(f => string.Equals(f, raw, StringComparison.OrdinalIgnoreCase)))
-                {
-                    files.Add(raw);
-                }
+                string groupName = ExtractSchemaName(filePath);
+                AddFilePathToGroup(schemaWithFiles, filePath, groupName);
             }
 
-            foreach (var kv in byName)
-                kv.Value.Sort(StringComparer.OrdinalIgnoreCase);
-
-            var result = byName
-                .OrderBy(kv => kv.Key.Equals("Other", StringComparison.OrdinalIgnoreCase) ? "zzz" : kv.Key,
-                         StringComparer.OrdinalIgnoreCase)
-                .Select(kv => new GroupedFiles(kv.Key, kv.Value))
-                .ToList();
+            List<Schema> result = CreateSchemaGroups(schemaWithFiles);
 
             return result;
         }
 
+        /// <summary>
+        /// Извлекает название схемы из названия файла
+        /// </summary>
+        /// <param name="rawPath">Путь до измененного файла пакета</param>
+        /// <returns>Название схемы</returns>
+        private static string ExtractSchemaName(string rawPath)
+        {
+            var normalizedPath = rawPath.Replace('\\', Path.DirectorySeparatorChar)
+                                        .Replace('/', Path.DirectorySeparatorChar);
+
+            var segments = normalizedPath.Split(new[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+
+            var packageFolderInfo = FindPackageFolder(segments);
+            string schemaName;
+
+            if (packageFolderInfo.idx < 0 || packageFolderInfo.idx + 1 >= segments.Length)
+            {
+                schemaName = "Other";
+            }
+            else
+            {
+                var schemaFolder = segments[packageFolderInfo.idx + 1];
+                schemaName = ExtractSchemaNameForResources(packageFolderInfo.packageFolder, schemaFolder);
+            }
+
+            return schemaName;
+        }
+
+        /// <summary>
+        /// Группирует файлы по схемам
+        /// </summary>
+        /// <param name="schemaWithFiles">Справочник Схема и набор файлов</param>
+        /// <returns></returns>
+        private static List<Schema> CreateSchemaGroups(Dictionary<string, List<string>> schemaWithFiles)
+        {
+            foreach (var group in schemaWithFiles)
+            {
+                group.Value.Sort(StringComparer.OrdinalIgnoreCase);
+            }
+
+            var result = schemaWithFiles
+                .OrderBy(kv => kv.Key.Equals("Other", StringComparison.OrdinalIgnoreCase) ? "zzz" : kv.Key,
+                         StringComparer.OrdinalIgnoreCase)
+                .Select(kv => new Schema(kv.Key, kv.Value))
+                .ToList();
+            return result;
+        }
+
+        /// <summary>
+        /// Добавляет файл в схему
+        /// </summary>
+        /// <param name="schemaWithFiles">Справочник схем с файлами</param>
+        /// <param name="filePath">Путь до файла</param>
+        /// <param name="schemaName"></param>
+        private static void AddFilePathToGroup(Dictionary<string, List<string>> schemaWithFiles, string filePath, string schemaName)
+        {
+            List<string> files;
+            if (!schemaWithFiles.TryGetValue(schemaName, out files))
+            {
+                files = new List<string>();
+                schemaWithFiles[schemaName] = files;
+            }
+
+            if (!files.Any(f => string.Equals(f, filePath, StringComparison.OrdinalIgnoreCase)))
+            {
+                files.Add(filePath);
+            }
+        }
+
+        /// <summary>
+        /// Изввлекает путь до базовых каталогов пакета
+        /// </summary>
+        /// <param name="segments">Путь до файла, разделенный по каталогам</param>
+        /// <returns>Индекс каталога и его название</returns>
         private static (int idx, string packageFolder) FindPackageFolder(string[] segments)
         {
             for (int i = 0; i < segments.Length; i++)
@@ -77,7 +126,7 @@ namespace BPMSoft.Configuration
             return (-1, null);
         }
 
-        private static string Canonicalize(string packageFolder, string artifactFolder)
+        private static string ExtractSchemaNameForResources(string packageFolder, string artifactFolder)
         {
             var name = (artifactFolder ?? string.Empty).Trim();
 
@@ -92,12 +141,12 @@ namespace BPMSoft.Configuration
         }
     }
 
-    public sealed class GroupedFiles
+    public sealed class Schema
     {
         public string Name { get; private set; }
         public IReadOnlyList<string> Files { get; private set; }
 
-        public GroupedFiles(string name, IReadOnlyList<string> files)
+        public Schema(string name, IReadOnlyList<string> files)
         {
             Name = name;
             Files = files ?? new List<string>();
