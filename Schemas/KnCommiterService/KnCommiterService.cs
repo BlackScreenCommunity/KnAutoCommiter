@@ -140,6 +140,46 @@ namespace BPMSoft.Configuration
 
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
+        public async Task<StatusDTO> GetRepoStatusWithSchemas()
+        {
+            try
+            {
+                string status = await GitCliClient.StatusPorcelainAsync(RepositoryPath);
+
+                var statusEntries = status.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+
+                var cleanPathes = new List<string>();
+                foreach (var clean in statusEntries)
+                {
+                    if (clean.Length > 3)
+                    {
+                        cleanPathes.Add(clean.Substring(3));
+                    }
+                }
+
+                var schemasStatus = SchemaGrouper.Group(cleanPathes);
+
+                var log = await GitCliClient.GetLog(RepositoryPath);
+                var commitsToPushCount = await GitCliClient.GetCountOfCommitsToPush(RepositoryPath);
+
+                return new StatusDTO()
+                {
+                    Schemas = schemasStatus,
+                    Log = log.ToArray(),
+                    CommitsToPushCount = commitsToPushCount
+                };
+            }
+            catch (Exception ex)
+            {
+                return new StatusDTO()
+                {
+                    Status = ex.Message,
+                };
+            }
+        }
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
         public async Task<string[]> GetLog()
         {
             try
@@ -264,5 +304,8 @@ namespace BPMSoft.Configuration
 
         [DataMember]
         public int CommitsToPushCount;
+
+        [DataMember]
+        public IReadOnlyList<Schema> Schemas { get; internal set; }
     }
 }

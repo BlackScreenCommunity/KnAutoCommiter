@@ -28,13 +28,8 @@ define("KnGitGuiMixin", [
 				if (data && data.getCount() >= 0) {
 					var gridConfig = this.getGridConfig();
 
-					var handler = function (
-						returnCode,
-						rejectingReason,
-						scope,
-					) {
+					var handler = function (scope) {
 						scope.onDestroy();
-						//next(returnCode, rejectingReason);
 					};
 
 					if (!this.messageBoxInstance) {
@@ -102,32 +97,23 @@ define("KnGitGuiMixin", [
 		},
 
 		prepareGridData: function (gitStatusInfo) {
-			let data = gitStatusInfo
-				.split("\r\n")
-				.filter((x) => x.length > 0)
-				.map((x) => this.splitStrinngByStatusAndFile(x))
-				.map((x) => ({
-					Status: this.changeStatusEnum[x.Status],
-					Name: x.Name,
-				}));
-
 			var results = Ext.create("BPMSoft.BaseViewModelCollection");
 
-			data.forEach(function (changeItem) {
+			gitStatusInfo.forEach(function (changeItem) {
 				var diffItem = Ext.create("BPMSoft.BaseGridRowViewModel", {
 					columns: {
-						Status: {
-							name: "Status",
+						SchemaName: {
+							name: "SchemaName",
 							dataValueType: BPMSoft.DataValueType.TEXT,
 						},
-						Name: {
-							name: "Name",
+						Files: {
+							name: "Files",
 							dataValueType: BPMSoft.DataValueType.TEXT,
 						},
 					},
 				});
-				diffItem.set("Status", changeItem.Status);
-				diffItem.set("Name", changeItem.Name);
+				diffItem.set("SchemaName", changeItem.Name);
+				diffItem.set("Files", changeItem.Files);
 
 				results.add(BPMSoft.generateGUID(), diffItem);
 			});
@@ -138,19 +124,19 @@ define("KnGitGuiMixin", [
 		prepareCollection: function (callback) {
 			ServiceHelper.callService(
 				"KnCommiterService",
-				"GetRepoStatus",
+				"GetRepoStatusWithSchemas",
 				function (response) {
 					if (
 						response &&
-						response.GetRepoStatusResult &&
-						response.GetRepoStatusResult.Log
+						response.GetRepoStatusWithSchemasResult &&
+						response.GetRepoStatusWithSchemasResult.Log
 					) {
 						let gridContent = this.prepareGridData(
-							response.GetRepoStatusResult.Status,
+							response.GetRepoStatusWithSchemasResult.Schemas,
 						);
 
 						let formattedLog = this.formatLog(
-							response.GetRepoStatusResult.Log,
+							response.GetRepoStatusWithSchemasResult.Log,
 						);
 						Ext.callback(callback, this, [
 							gridContent,
@@ -183,16 +169,16 @@ define("KnGitGuiMixin", [
 			var listedConfig = {
 				captionsConfig: [
 					{
-						cols: 4,
+						cols: 3,
 						name: "Фиксировать?",
 					},
 					{
-						cols: 3,
-						name: "Статус",
+						cols: 6,
+						name: "Название схемы",
 					},
 					{
-						cols: 17,
-						name: "Название файла",
+						cols: 15,
+						name: "Список файлов схемы",
 					},
 				],
 
@@ -200,30 +186,30 @@ define("KnGitGuiMixin", [
 			};
 
 			var isNeedToAddColumn = {
-				cols: 4,
+				cols: 3,
 				key: [
 					{
 						type: "text",
 					},
 				],
 			};
-			var statusColumn = {
-				cols: 3,
+			var schemaNameColumn = {
+				cols: 6,
 				key: [
 					{
 						name: {
-							bindTo: "Status",
+							bindTo: "SchemaName",
 						},
 						type: "text",
 					},
 				],
 			};
-			var nameColumn = {
-				cols: 17,
+			var filesColumn = {
+				cols: 15,
 				key: [
 					{
 						name: {
-							bindTo: "Name",
+							bindTo: "Files",
 						},
 						type: "text",
 					},
@@ -231,8 +217,8 @@ define("KnGitGuiMixin", [
 			};
 
 			listedConfig.columnsConfig.push(isNeedToAddColumn);
-			listedConfig.columnsConfig.push(statusColumn);
-			listedConfig.columnsConfig.push(nameColumn);
+			listedConfig.columnsConfig.push(schemaNameColumn);
+			listedConfig.columnsConfig.push(filesColumn);
 
 			var gridConfig = {
 				type: "listed",
