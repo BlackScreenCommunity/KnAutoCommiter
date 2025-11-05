@@ -442,7 +442,8 @@ define("KnGitGuiMessageBox", [
 			) {
 				let selectedFiles = this.grid.selectedRows
 					.map((x) => this.gridData.getByIndex(x))
-					.map((x) => x.get("Name"));
+					.map((x) => x.get("Files"))
+					.flat();
 				let commitMessage = this.commitMessageBox.value;
 
 				var commit = {
