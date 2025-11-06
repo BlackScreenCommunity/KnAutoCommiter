@@ -143,8 +143,9 @@
 
     public sealed class Schema
     {
-        public string Name { get; private set; }
-        public IReadOnlyList<string> Files { get; private set; }
+        public string Name { get; internal set; }
+        public IReadOnlyList<string> Files { get; internal set; }
+        public string Caption { get; internal set; }
 
         public Schema(string name, IReadOnlyList<string> files)
         {

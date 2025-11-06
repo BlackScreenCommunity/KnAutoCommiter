@@ -159,6 +159,11 @@ namespace BPMSoft.Configuration
 
                 var schemasStatus = SchemaGrouper.Group(cleanPathes);
 
+                foreach (var schema in schemasStatus)
+                {
+                    KnSchemaTitleEnricher.Enrich(UserConnection, schema);
+                }
+
                 var log = await GitCliClient.GetLog(RepositoryPath);
                 var commitsToPushCount = await GitCliClient.GetCountOfCommitsToPush(RepositoryPath);
 
@@ -307,5 +312,7 @@ namespace BPMSoft.Configuration
 
         [DataMember]
         public IReadOnlyList<Schema> Schemas { get; internal set; }
+        [DataMember]
+        public string Comment { get; internal set; }
     }
 }
