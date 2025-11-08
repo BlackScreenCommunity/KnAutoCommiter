@@ -435,24 +435,30 @@ define("KnGitGuiMessageBox", [
 		 * Обработчик нажатия на кнопку "Сделать коммит"
 		 */
 		onCommitMessageBoxButtonClick: function () {
-			if (
+			const isComminPrepared =
 				this.grid?.selectedRows?.length > 0 &&
 				this.commitMessageBox &&
-				this.commitMessageBox.value
-			) {
-				let selectedFiles = this.grid.selectedRows
-					.map((x) => this.gridData.getByIndex(x))
-					.map((x) => x.get("Files"))
-					.flat();
-				let commitMessage = this.commitMessageBox.value;
+				this.commitMessageBox.value;
 
-				var commit = {
-					message: commitMessage,
-					changes: selectedFiles,
-				};
-
-				this.fireEvent("commitPrepared", commit);
+			if (!isComminPrepared) {
+				BPMSoft.showErrorMessage(
+					"Не выбраны файлы для фиксации или не заполнено сообщение коммита",
+				);
+				return;
 			}
+
+			let selectedFiles = this.grid.selectedRows
+				.map((x) => this.gridData.getByIndex(x))
+				.map((x) => x.get("Files"))
+				.flat();
+			let commitMessage = this.commitMessageBox.value;
+
+			var commit = {
+				message: commitMessage,
+				changes: selectedFiles,
+			};
+
+			this.fireEvent("commitPrepared", commit);
 		},
 
 		onDownloadChangesToFSButtonClick: function () {
