@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Resources Culture="ru-RU">
+<Resources Culture="en-US">
 	<Group Type="String">
 		<Items>
 			<Item Name="Caption" Value="Миксин, отвечающий за подготовку и обработку данных для модального окна GitClient" />

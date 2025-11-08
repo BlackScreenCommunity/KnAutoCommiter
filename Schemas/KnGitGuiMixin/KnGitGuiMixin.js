@@ -112,7 +112,14 @@ define("KnGitGuiMixin", [
 						},
 					},
 				});
-				diffItem.set("SchemaName", changeItem.Name);
+				diffItem.set(
+					"SchemaName",
+					Ext.String.format(
+						"{0} ({1})",
+						changeItem.Name,
+						changeItem.Caption,
+					),
+				);
 				diffItem.set("Files", changeItem.Files);
 
 				results.add(BPMSoft.generateGUID(), diffItem);
