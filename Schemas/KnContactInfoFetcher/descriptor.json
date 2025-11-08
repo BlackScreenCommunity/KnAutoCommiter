@@ -1,0 +1,9 @@
+﻿{
+  "Descriptor": {
+    "UId": "29e523c8-48bb-4753-95cc-85131b4fbe54",
+    "Name": "KnContactInfoFetcher",
+    "ModifiedOnUtc": "\/Date(1762611356000)\/",
+    "ManagerName": "SourceCodeSchemaManager",
+    "Caption": "Механизм получения данных о контакте текущего пользователе"
+  }
+}

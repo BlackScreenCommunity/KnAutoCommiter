@@ -50,7 +50,17 @@ namespace BPMSoft.Configuration
             {
                 if (string.IsNullOrEmpty(_authorName))
                 {
-                    _authorName = GetSysSettingsValue("KnAutocommiterAuthorName");
+                    var currentContactName = ContactInfoFetcher.GetContactName(UserConnection);
+
+                    if (!string.IsNullOrEmpty(currentContactName))
+                    {
+                        _authorName = currentContactName;
+                    }
+                    else
+                    {
+                        _authorName = GetSysSettingsValue("KnAutocommiterAuthorName");
+                    }
+
                 }
                 return _authorName;
             }
@@ -61,7 +71,16 @@ namespace BPMSoft.Configuration
             {
                 if (string.IsNullOrEmpty(_authorEmail))
                 {
-                    _authorEmail = GetSysSettingsValue("KnAutocommiterAuthorEmail");
+                    var currentContactEmail = ContactInfoFetcher.GetContactEmail(UserConnection);
+
+                    if (!string.IsNullOrEmpty(currentContactEmail))
+                    {
+                        _authorEmail = currentContactEmail;
+                    }
+                    else
+                    {
+                        _authorEmail = GetSysSettingsValue("KnAutocommiterAuthorEmail");
+                    }
                 }
                 return _authorEmail;
             }
