@@ -77,8 +77,15 @@ define("KnGitGuiMixin", [
 			ServiceHelper.callService(
 				"KnCommiterService",
 				"AddAndCommitChanges",
-				function () {
-					this.showModalBox();
+				function (result) {
+					if (result && result.AddAndCommitChangesResult) {
+						this.showModalBox();
+						if (result.AddAndCommitChangesResult == "ok") {
+							BPMSoft.showInformation(
+								"Коммит подготовлен. Можно отправить изменения",
+							);
+						}
+					}
 				},
 				commit,
 				this,
