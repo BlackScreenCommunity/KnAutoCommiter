@@ -97,7 +97,14 @@ define("KnGitGuiMixin", [
 				"KnCommiterService",
 				"Push",
 				function () {
-					this.showModalBox();
+					if (result && result.PushResult) {
+						this.showModalBox();
+						if (result.PushResult == "ok") {
+							BPMSoft.showInformation(
+								"Все изменения зафиксированы в репозитории",
+							);
+						}
+					}
 				},
 				{},
 				this,
