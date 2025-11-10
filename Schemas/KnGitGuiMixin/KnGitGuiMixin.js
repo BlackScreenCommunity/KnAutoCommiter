@@ -2,6 +2,7 @@ define("KnGitGuiMixin", [
 	"ext-base",
 	"ServiceHelper",
 	"KnGitGuiMessageBox",
+	"BaseGridRowViewModel",
 ], function (Ext, ServiceHelper) {
 	Ext.define("BPMSoft.configuration.mixins.KnGitGuiMixin", {
 		alternateClassName: "BPMSoft.KnGitGuiMixin",
