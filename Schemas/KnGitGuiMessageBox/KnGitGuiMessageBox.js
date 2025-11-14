@@ -116,6 +116,8 @@ define("KnGitGuiMessageBox", [
 			this.initcommitMessageBox();
 			this.initGitLogLabels();
 			this.adjustDialog();
+			this.renderCommitButton();
+			this.renderPushButton();
 			this.renderDownloadChangesToFSButton();
 		},
 
@@ -128,7 +130,47 @@ define("KnGitGuiMessageBox", [
 			this.initcommitMessageBox();
 			this.initGitLogLabels();
 			this.adjustDialog();
+			this.renderCommitButton();
+			this.renderPushButton();
 			this.renderDownloadChangesToFSButton();
+		},
+
+		/*
+		 * Добавить кнопку создания коммита
+		 */
+		renderCommitButton: function () {
+			let commitButtonContainer = Ext.get("kn-dialog-commit-button");
+
+			Ext.create("BPMSoft.Button", {
+				id: "GitGuiMessageBoxCommitButton",
+				className: "BPMSoft.Button",
+				caption: "Сделать коммит",
+				markerValue: "commit",
+				returnCode: "commit",
+				style: "transparent",
+				imageConfig: this.getButtonImageConfig("CommitButtonIcon"),
+				handler: this.onCommitMessageBoxButtonClick.bind(this),
+				renderTo: commitButtonContainer,
+			});
+		},
+
+		/*
+		 * Добавить кнопку отправки изменений (push)
+		 */
+		renderPushButton: function () {
+			let pushButtonContainer = Ext.get("kn-dialog-push-button");
+
+			Ext.create("BPMSoft.Button", {
+				id: "GitGuiMessageBoxPushButton",
+				className: "BPMSoft.Button",
+				caption: "Отправить изменения на сервер",
+				markerValue: "push",
+				returnCode: "push",
+				style: "transparent",
+				imageConfig: this.getButtonImageConfig("PushButtonIcon"),
+				handler: this.onMessageBoxPushButtonClick.bind(this),
+				renderTo: pushButtonContainer,
+			});
 		},
 
 		/*
@@ -172,7 +214,10 @@ define("KnGitGuiMessageBox", [
 				"</div>",
 				'<div id="{id}-grid" class="{gridClass}" data-tour="unstaged"></div>',
 				'<div id="{id}-commit-message-text-box" class="{commitMessageTextBox}" data-tour="message"></div>',
-				'<div id="kn-dialog-btns" class="{buttonsClass}" data-tour="buttons"></dev>',
+				'<div id="kn-dialog-btns" class="{buttonsClass}" data-tour="buttons">',
+				'<div id="kn-dialog-commit-button" data-tour="commit-button"></div>',
+				'<div id="kn-dialog-push-button" data-tour="push-button"></div>',
+				"</dev>",
 				'<tpl for="items">',
 				"<@item>",
 				"</tpl>",
@@ -236,30 +281,6 @@ define("KnGitGuiMessageBox", [
 		getButtons: function () {
 			var buttonsArray = [];
 
-			var commitButtonConfig = {
-				id: "GitGuiMessageBoxCommitButton",
-				className: "BPMSoft.Button",
-				caption: "Сделать коммит",
-				markerValue: "commit",
-				returnCode: "commit",
-				style: "transparent",
-				imageConfig: this.getButtonImageConfig("CommitButtonIcon"),
-				handler: this.onCommitMessageBoxButtonClick.bind(this),
-			};
-			buttonsArray.push(commitButtonConfig);
-
-			var pushButtonConfig = {
-				id: "GitGuiMessageBoxPushButton",
-				className: "BPMSoft.Button",
-				caption: "Отправить изменения на сервер",
-				markerValue: "push",
-				returnCode: "push",
-				style: "transparent",
-				imageConfig: this.getButtonImageConfig("PushButtonIcon"),
-				handler: this.onMessageBoxPushButtonClick.bind(this),
-			};
-			buttonsArray.push(pushButtonConfig);
-
 			var closeButton = {
 				id: "CloseMessageBoxButton",
 				className: "BPMSoft.Button",
@@ -315,8 +336,13 @@ define("KnGitGuiMessageBox", [
 					pos: "top",
 				},
 				{
-					selector: '[data-tour="buttons"]',
-					text: "<b>Сделать коммит</b> — <i>Упаковывем</i> изменения и готовим их к отправке. <br/> Для того, чтобы сделать коммит обязательно нужно выбрать хотя бы один файл, и указать сообщение коммита. После нажатия на кнопку коммит будет отображен в списке Последних изменений <br/><br/>  <b>Отправить изменения на сервер</b> публикует изменения, после чего они будут доступны для других участников команды. Публикация гарантирует нам, что отправленные изменения не будут потеряны, если с нашим стендом что-то произойдет.",
+					selector: '[data-tour="commit-button"]',
+					text: "<b>Сделать коммит</b> — <i>Упаковывем</i> изменения и готовим их к отправке. <br/> Для того, чтобы сделать коммит обязательно нужно выбрать хотя бы один файл, и указать сообщение коммита. После нажатия на кнопку коммит будет отображен в списке Последних изменений",
+					pos: "top",
+				},
+				{
+					selector: '[data-tour="push-button"]',
+					text: "<b>Отправить изменения на сервер</b> публикует изменения, после чего они будут доступны для других участников команды. Публикация гарантирует нам, что отправленные изменения не будут потеряны, если с нашим стендом что-то произойдет.",
 					pos: "top",
 				},
 			];
