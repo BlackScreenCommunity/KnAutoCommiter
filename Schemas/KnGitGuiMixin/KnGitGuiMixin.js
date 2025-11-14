@@ -96,7 +96,7 @@ define("KnGitGuiMixin", [
 			ServiceHelper.callService(
 				"KnCommiterService",
 				"Push",
-				function () {
+				function (result) {
 					if (result && result.PushResult) {
 						this.showModalBox();
 						if (result.PushResult == "ok") {
