@@ -216,7 +216,10 @@ define("KnGitGuiMessageBox", [
 				'<div id="{id}-commit-message-text-box" class="{commitMessageTextBox}" data-tour="message"></div>',
 				'<div id="kn-dialog-btns" class="{buttonsClass}" data-tour="buttons">',
 				'<div id="kn-dialog-commit-button" data-tour="commit-button"></div>',
+				'<div class="push-button-container">',
 				'<div id="kn-dialog-push-button" data-tour="push-button"></div>',
+				'<div id="kn-dialog-push-button-counter" class="push-button-counter" data-tour="push-button-counter">Количество для отправки: {countOfCommitsToPush}</div>',
+				"</dev>",
 				"</dev>",
 				'<tpl for="items">',
 				"<@item>",
@@ -271,6 +274,7 @@ define("KnGitGuiMessageBox", [
 			tplData.caption = this.caption;
 			tplData.message = this.message;
 			tplData.logContainerMessage = this.logContainerMessage;
+			tplData.countOfCommitsToPush = this.countOfCommitsToPush;
 			Ext.apply(tplData, this.getCssClasses());
 			return tplData;
 		},
@@ -343,6 +347,11 @@ define("KnGitGuiMessageBox", [
 				{
 					selector: '[data-tour="push-button"]',
 					text: "<b>Отправить изменения на сервер</b> публикует изменения, после чего они будут доступны для других участников команды. Публикация гарантирует нам, что отправленные изменения не будут потеряны, если с нашим стендом что-то произойдет.",
+					pos: "top",
+				},
+				{
+					selector: '[data-tour="push-button-counter"]',
+					text: "<b>Количество неотправленных комитов</b>. Если счетчик показывает 0, то все подготовленные коммиты отправлены на сервер и вся команда может забрать эти изменения. Если значение 0, то отправка не будет запущена",
 					pos: "top",
 				},
 			];
@@ -495,6 +504,13 @@ define("KnGitGuiMessageBox", [
 		 * Обработчик нажатия на кнопку "Отправить изменения на сервер"
 		 */
 		onMessageBoxPushButtonClick: function () {
+			if (this.countOfCommitsToPush == 0) {
+				BPMSoft.showErrorMessage(
+					"Нет изменений для отправки на сервер",
+				);
+				return;
+			}
+
 			this.fireEvent("push");
 		},
 

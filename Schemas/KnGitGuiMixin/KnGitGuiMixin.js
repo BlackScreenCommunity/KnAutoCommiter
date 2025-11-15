@@ -163,6 +163,8 @@ define("KnGitGuiMixin", [
 						Ext.callback(callback, this, [
 							gridContent,
 							formattedLog,
+							response.GetRepoStatusWithSchemasResult
+								.CommitsToPushCount,
 						]);
 					}
 				},
