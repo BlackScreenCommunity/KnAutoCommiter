@@ -104,6 +104,7 @@ define("KnGitGuiMessageBox", [
 		reRender: function () {
 			this.renderTo = Ext.getBody();
 			this.removeCoverEl();
+			this.getTplData();
 			this.callParent(arguments);
 		},
 
@@ -270,6 +271,7 @@ define("KnGitGuiMessageBox", [
 		 * Формирует html шаблон
 		 */
 		getTplData: function () {
+			debugger;
 			var tplData = this.callParent(arguments);
 			tplData.caption = this.caption;
 			tplData.message = this.message;
