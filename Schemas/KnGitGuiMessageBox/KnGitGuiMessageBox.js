@@ -151,8 +151,7 @@ define("KnGitGuiMessageBox", [
 		 * Обновить счетчик неотправленных коммитов
 		 */
 		refreshPushButtonCounter: function () {
-			debugger;
-			Ext.getCmp("GitGuiMessageBoxPushButtonLabel").setCaption(
+			this.pushButtonCounterElement.setCaption(
 				Ext.String.format(
 					this.pushButtonCounterCaptionTemplate,
 					this.countOfCommitsToPush,
