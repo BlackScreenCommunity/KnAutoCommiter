@@ -1,3 +1,4 @@
+/* eslint-disable prefer-class */
 define("KnGitGuiMixin", [
 	"ext-base",
 	"ServiceHelper",
@@ -9,20 +10,6 @@ define("KnGitGuiMixin", [
 
 		collection: null,
 		messageBoxInstance: null,
-
-		changeStatusEnum: Object.freeze({
-			" M": "Изменен",
-			"M ": "Изменен и готов к фиксации",
-			MM: "Часть изменений зафиксирована",
-			"A ": "Добавлен",
-			AM: "Новый файл, часть изменений зафиксирована",
-			" D": "Удален и готов к фиксации",
-			"D ": "Удален",
-			"R ": "Переименован",
-			"C ": "Скопирован",
-			"??": "Создан",
-			UU: "Конфликт",
-		}),
 
 		showModalBox: function () {
 			var callback = function (data, log, countOfCommitsToPush) {
@@ -64,6 +51,7 @@ define("KnGitGuiMixin", [
 						this.messageBoxInstance.initgrid();
 						this.messageBoxInstance.initGitLogLabels();
 						this.messageBoxInstance.refreshCommitMessageBox();
+						this.messageBoxInstance.refreshPushButtonCounter();
 					} else {
 						this.messageBoxInstance.show();
 					}
@@ -73,6 +61,11 @@ define("KnGitGuiMixin", [
 			this.prepareCollection(callback);
 		},
 
+		/**
+		 * Обработка создания коммита
+		 * Получает подготовленный коммит
+		 * и отправляет его на сервер
+		 */
 		applyCommit: function (commit) {
 			ServiceHelper.callService(
 				"KnCommiterService",
@@ -92,6 +85,10 @@ define("KnGitGuiMixin", [
 			);
 		},
 
+		/**
+		 * Инициирует отправку коммитов
+		 * в удаленный репозиторий
+		 */
 		pushChanges: function () {
 			ServiceHelper.callService(
 				"KnCommiterService",
@@ -111,22 +108,15 @@ define("KnGitGuiMixin", [
 			);
 		},
 
+		/**
+		 * Подготовка данных для реестра
+		 * измененных схем
+		 */
 		prepareGridData: function (gitStatusInfo) {
 			var results = Ext.create("BPMSoft.BaseViewModelCollection");
 
 			gitStatusInfo.forEach(function (changeItem) {
-				var diffItem = Ext.create("BPMSoft.BaseGridRowViewModel", {
-					columns: {
-						SchemaName: {
-							name: "SchemaName",
-							dataValueType: BPMSoft.DataValueType.TEXT,
-						},
-						Files: {
-							name: "Files",
-							dataValueType: BPMSoft.DataValueType.TEXT,
-						},
-					},
-				});
+				let diffItem = this.prepareDiffItemGridRowViewModel();
 				diffItem.set(
 					"SchemaName",
 					Ext.String.format(
@@ -138,11 +128,33 @@ define("KnGitGuiMixin", [
 				diffItem.set("Files", changeItem.Files);
 
 				results.add(BPMSoft.generateGUID(), diffItem);
-			});
+			}, this);
 
 			return results;
 		},
 
+		/**
+		 * Созает модель для ряда реетра изменений
+		 */
+		prepareDiffItemGridRowViewModel: function () {
+			return Ext.create("BPMSoft.BaseGridRowViewModel", {
+				columns: {
+					SchemaName: {
+						name: "SchemaName",
+						dataValueType: BPMSoft.DataValueType.TEXT,
+					},
+					Files: {
+						name: "Files",
+						dataValueType: BPMSoft.DataValueType.TEXT,
+					},
+				},
+			});
+		},
+
+		/**
+		 * Получает данные об изменениях в
+		 * каталоге репозитория
+		 */
 		prepareCollection: function (callback) {
 			ServiceHelper.callService(
 				"KnCommiterService",
@@ -173,6 +185,10 @@ define("KnGitGuiMixin", [
 			);
 		},
 
+		/**
+		 * Преобразует полученные от git данные
+		 * о времени создания коммита
+		 */
 		formatLog: function (logLines) {
 			let result = logLines
 				.map((x) => x.replaceAll("seconds ago", "секунд назад"))
@@ -252,14 +268,6 @@ define("KnGitGuiMixin", [
 			};
 
 			return gridConfig;
-		},
-
-		splitStrinngByStatusAndFile: function (statusLine) {
-			let position = 2;
-			return {
-				Status: statusLine.substr(0, position),
-				Name: statusLine.substr(position + 1),
-			};
 		},
 	});
 
