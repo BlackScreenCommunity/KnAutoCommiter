@@ -7,23 +7,26 @@ define("KnGitGuiMessageBox", [
 		alternateClassName: "BPMSoft.KnGitGuiMessageBox",
 
 		/**
-		 * Заголовок модального окна
-		 */
-		caption: "",
-
-		/**
-		 * Сообщение пользователю
-		 */
-		message: "",
-
-		logContainerMessage: "Последние изменения",
-
-		/**
 		 * Журнал изменений git log
 		 */
 		log: [],
 
+		/**
+		 * Количество неотправленных коммитов
+		 */
 		countOfCommitsToPush: 0,
+
+		/**
+		 * Шаблон для отображения уведомления
+		 * о количестве неотправленных коммитов
+		 **/
+		pushButtonCounterCaptionTemplate:
+			"Количество коммитов для отправки: {0}",
+
+		/**
+		 * Элемент со счетчиком коммитов
+		 */
+		pushButtonCounterElement: null,
 
 		/**
 		 * Признак видимости модального окна
@@ -56,11 +59,6 @@ define("KnGitGuiMessageBox", [
 		commitMessageBox: null,
 
 		/**
-		 * Подпись текстового поле "Сообщение коммита"
-		 */
-		commitMessageBoxLabel: null,
-
-		/**
 		 * Функция - обработчик нажатия на кнопку модального окна
 		 */
 		handler: null,
@@ -76,17 +74,11 @@ define("KnGitGuiMessageBox", [
 		constructor: function () {
 			this.callParent(arguments);
 
-			this.caption = "Фиксация изменений";
 			this.selectors = this.getSelectors();
 
 			this.addEvents("commitPrepared");
 			this.addEvents("push");
 			this.addEvents("downloadToFS");
-
-			this.message =
-				this.message.length > 0
-					? this.message
-					: "Незафиксированные изменения";
 		},
 
 		/**
@@ -136,7 +128,7 @@ define("KnGitGuiMessageBox", [
 			this.renderDownloadChangesToFSButton();
 		},
 
-		/*
+		/**
 		 * Добавить кнопку создания коммита
 		 */
 		renderCommitButton: function () {
@@ -155,11 +147,27 @@ define("KnGitGuiMessageBox", [
 			});
 		},
 
-		/*
+		/**
+		 * Обновить счетчик неотправленных коммитов
+		 */
+		refreshPushButtonCounter: function () {
+			debugger;
+			Ext.getCmp("GitGuiMessageBoxPushButtonLabel").setCaption(
+				Ext.String.format(
+					this.pushButtonCounterCaptionTemplate,
+					this.countOfCommitsToPush,
+				),
+			);
+		},
+
+		/**
 		 * Добавить кнопку отправки изменений (push)
 		 */
 		renderPushButton: function () {
 			let pushButtonContainer = Ext.get("kn-dialog-push-button");
+			let pushButtonCounterContainer = Ext.get(
+				"kn-dialog-push-button-counter",
+			);
 
 			Ext.create("BPMSoft.Button", {
 				id: "GitGuiMessageBoxPushButton",
@@ -172,9 +180,18 @@ define("KnGitGuiMessageBox", [
 				handler: this.onMessageBoxPushButtonClick.bind(this),
 				renderTo: pushButtonContainer,
 			});
+
+			this.pushButtonCounterElement = Ext.create("BPMSoft.TipLabel", {
+				id: "GitGuiMessageBoxPushButtonLabel",
+				caption: Ext.String.format(
+					this.pushButtonCounterCaptionTemplate,
+					this.countOfCommitsToPush,
+				),
+				renderTo: pushButtonCounterContainer,
+			});
 		},
 
-		/*
+		/**
 		 * Добавить кнопку обновления
 		 * списка незафиксированных изменений
 		 * Выгрузка данных в файловую систему
@@ -187,7 +204,6 @@ define("KnGitGuiMessageBox", [
 			Ext.create("BPMSoft.Button", {
 				id: "GitGuiDownloadChangesToFSButton",
 				className: "BPMSoft.Button",
-				// caption: "Выгрузить изменения",
 				markerValue: "downloadToFS",
 				returnCode: "downloadToFS",
 				style: "transparent",
@@ -206,11 +222,11 @@ define("KnGitGuiMessageBox", [
 			return [
 				'<div id="{id}-cover" class="{coverClass}"></div>',
 				'<div id="{id}-wrap" class="{boxClass}">',
-				'<div id="{id}-caption" class="{captionClass}">{caption}</div>',
-				'<div id="{id}-log-container-header" class="{messageClass}">{logContainerMessage}</div>',
+				'<div id="{id}-caption" class="{captionClass}">Фиксация изменений</div>',
+				'<div id="{id}-log-container-header" class="{messageClass}">Журнал коммитов</div>',
 				'<div id="{id}-log-container" class="{log-container}" data-tour="last"></div>',
 				'<div class="header-with-button">',
-				'<div id="{id}-message" class="{messageClass}">{message}</div>',
+				'<div id="{id}-message" class="{messageClass}">Незафиксированные изменения</div>',
 				'<div id="{id}-reload-button" class="{messageClass}" data-tour="download-changes-button"></div>',
 				"</div>",
 				'<div id="{id}-grid" class="{gridClass}" data-tour="unstaged"></div>',
@@ -219,7 +235,7 @@ define("KnGitGuiMessageBox", [
 				'<div id="kn-dialog-commit-button" data-tour="commit-button"></div>',
 				'<div class="push-button-container">',
 				'<div id="kn-dialog-push-button" data-tour="push-button"></div>',
-				'<div id="kn-dialog-push-button-counter" class="push-button-counter" data-tour="push-button-counter">Количество для отправки: {countOfCommitsToPush}</div>',
+				'<div id="kn-dialog-push-button-counter" class="push-button-counter" data-tour="push-button-counter"></div>',
 				"</dev>",
 				"</dev>",
 				'<tpl for="items">',
@@ -271,12 +287,7 @@ define("KnGitGuiMessageBox", [
 		 * Формирует html шаблон
 		 */
 		getTplData: function () {
-			debugger;
 			var tplData = this.callParent(arguments);
-			tplData.caption = this.caption;
-			tplData.message = this.message;
-			tplData.logContainerMessage = this.logContainerMessage;
-			tplData.countOfCommitsToPush = this.countOfCommitsToPush;
 			Ext.apply(tplData, this.getCssClasses());
 			return tplData;
 		},
@@ -498,6 +509,10 @@ define("KnGitGuiMessageBox", [
 			this.fireEvent("commitPrepared", commit);
 		},
 
+		/**
+		 * Обработчик нажатия на кнопку "Выгрузить изменения
+		 * в файловую систему"
+		 */
 		onDownloadChangesToFSButtonClick: function () {
 			this.fireEvent("downloadChangesToFS");
 		},
@@ -575,7 +590,7 @@ define("KnGitGuiMessageBox", [
 			textBoxContainer.setHTML("");
 
 			this.log.forEach(function (gitLogItem) {
-				let gitLogItemLabel = Ext.create("BPMSoft.Label", {
+				Ext.create("BPMSoft.Label", {
 					caption: gitLogItem,
 					renderTo: textBoxContainer,
 					classes: {
@@ -593,7 +608,7 @@ define("KnGitGuiMessageBox", [
 				this.id + "-commit-message-text-box",
 			);
 
-			this.commitMessageBoxLabel = Ext.create("BPMSoft.Label", {
+			Ext.create("BPMSoft.Label", {
 				caption: "Опишите изменения и укажите номер задачи",
 				renderTo: textBoxContainer,
 				classes: {
@@ -607,6 +622,10 @@ define("KnGitGuiMessageBox", [
 			});
 		},
 
+		/**
+		 * Очищает текстовое поле сообщения
+		 * коммита после формирования коммита
+		 */
 		refreshCommitMessageBox: function () {
 			commitMessageBox = Ext.getCmp("commit-message-memo-edit");
 
