@@ -180,7 +180,7 @@ define("KnGitGuiMessageBox", [
 				renderTo: pushButtonContainer,
 			});
 
-			this.pushButtonCounterElement = Ext.create("BPMSoft.TipLabel", {
+			this.pushButtonCounterElement = Ext.create("BPMSoft.Label", {
 				id: "GitGuiMessageBoxPushButtonLabel",
 				caption: Ext.String.format(
 					this.pushButtonCounterCaptionTemplate,
