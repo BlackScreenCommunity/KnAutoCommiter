@@ -176,60 +176,71 @@
 
 // Стили для обучашки
 .tour-layer {
-  position: absolute; inset: 0;
-  pointer-events: none;
-  z-index: 999;
+	position: absolute; inset: 0;
+	pointer-events: none;
+	z-index: 999;
 }
 
 .tour-backdrop {
-  position: absolute; inset: 0;
-  background: rgba(0,0,0,.45);
+	position: absolute; inset: 0;
+	background: rgba(0,0,0,.45);
 }
 
 .tour-spotlight {
-  position: absolute;
-  border-radius: 8px;
-  box-shadow: 0 0 0 9999px rgba(0,0,0,.45);
-  outline: 2px solid rgba(255,255,255,.9);
-  transition: top .2s, left .2s, width .2s, height .2s;
+	position: absolute;
+	border-radius: 8px;
+	box-shadow: 0 0 0 9999px rgba(0,0,0,.45);
+	outline: 2px solid rgba(255,255,255,.9);
+	transition: top .2s, left .2s, width .2s, height .2s;
 }
 
 .tour-popover {
-  position: absolute;
-  max-width: 360px;
-  background: #fff;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0,0,0,.2);
-  padding: 14px 16px 12px;
-  pointer-events: auto;
-  font-size: 14px;
+	position: absolute;
+	max-width: 360px;
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 10px 30px rgba(0,0,0,.2);
+	padding: 14px 16px 12px;
+	pointer-events: auto;
+	font-size: 14px;
 }
 
 .tour-popover::after {
-  content: "";
-  position: absolute;
-  width: 0; height: 0;
-  border: 8px solid transparent;
+	content: "";
+	position: absolute;
+	width: 0; height: 0;
+	border: 8px solid transparent;
 }
 
 .tour-popover.pos-bottom::after {
-  top: -16px; left: 20px;
-  border-bottom-color: #fff;
+	top: -16px; left: 20px;
+	border-bottom-color: #fff;
 }
+
 .tour-popover.pos-top::after {
-  bottom: -16px; left: 20px;
-  border-top-color: #fff;
+	bottom: -16px; left: 20px;
+	border-top-color: #fff;
 }
+
 .tour-controls {
-  margin-top: 10px; display: flex; gap: 8px; justify-content: flex-end;
+	margin-top: 10px; display: flex; gap: 8px; justify-content: flex-end;
 }
+
 .tour-controls button {
-  padding: 6px 10px; border: 0; border-radius: 6px; cursor: pointer;
+	padding: 6px 10px; border: 0; border-radius: 6px; cursor: pointer;
 }
-.tour-controls .secondary { background:#eee; }
-.tour-controls .primary { background:#2d7ef7; color:#fff; }
+
+.tour-controls .secondary { 
+	background:#eee; 
+}
+
+.tour-controls .primary { 
+	background: var(--palette-primary-500);
+	color:#fff; 
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .tour-spotlight { transition: none; }
+	.tour-spotlight { transition: none; }
 }
 
 
