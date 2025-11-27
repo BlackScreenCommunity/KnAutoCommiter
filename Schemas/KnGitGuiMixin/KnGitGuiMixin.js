@@ -67,10 +67,12 @@ define("KnGitGuiMixin", [
 		 * и отправляет его на сервер
 		 */
 		applyCommit: function (commit) {
+			this.showMaskOnModalBox("Формируем коммиты");
 			ServiceHelper.callService(
 				"KnCommiterService",
 				"AddAndCommitChanges",
 				function (result) {
+					BPMSoft.MaskHelper.HideBodyMask();
 					if (result && result.AddAndCommitChangesResult) {
 						this.showModalBox();
 						if (result.AddAndCommitChangesResult == "ok") {
@@ -90,11 +92,13 @@ define("KnGitGuiMixin", [
 		 * в удаленный репозиторий
 		 */
 		pushChanges: function () {
+			this.showMaskOnModalBox("Отправляем изменения на сервер");
 			ServiceHelper.callService(
 				"KnCommiterService",
 				"Push",
 				function (result) {
 					if (result && result.PushResult) {
+						BPMSoft.MaskHelper.HideBodyMask();
 						this.showModalBox();
 						if (result.PushResult == "ok") {
 							BPMSoft.showInformation(
@@ -106,6 +110,14 @@ define("KnGitGuiMixin", [
 				{},
 				this,
 			);
+		},
+
+		showMaskOnModalBox: function (caption) {
+			const maskConfig = {
+				selector: "#KnGitGuiMessageBox-wrap",
+				caption: caption,
+			};
+			BPMSoft.MaskHelper.ShowBodyMask(maskConfig);
 		},
 
 		/**
