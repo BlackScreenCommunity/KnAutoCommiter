@@ -59,7 +59,14 @@
 
             if (packageFolderInfo.idx < 0 || packageFolderInfo.idx + 1 >= segments.Length)
             {
-                schemaName = "Other";
+                if (packageFolderInfo.packageFolder == "Data")
+                {
+                    schemaName = "Data";
+                }
+                else
+                {
+                    schemaName = "Other";
+                }
             }
             else
             {
