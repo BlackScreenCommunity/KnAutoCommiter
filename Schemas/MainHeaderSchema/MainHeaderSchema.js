@@ -1,12 +1,34 @@
-define("MainHeaderSchema", ["KnGitGuiMixin"], function () {
+define("MainHeaderSchema", ["RightUtilities", "KnGitGuiMixin"], function (
+	RightUtilities,
+) {
 	return {
+		attributes: {
+			CanUseGitClient: {
+				dataValueType: BPMSoft.DataValueType.BOOLEAN,
+				value: false,
+			},
+		},
 		mixins: {
 			KnGitGuiMixin: "BPMSoft.KnGitGuiMixin",
 		},
 
 		methods: {
+			init: function () {
+				this.callParent(arguments);
+				this.getCanUseGitClient();
+			},
+
+			getCanUseGitClient: function () {
+				RightUtilities.checkCanExecuteOperations(
+					["KnCanUseGitClient"],
+					function (result) {
+						this.set("CanUseGitClient", result.KnCanUseGitClient);
+					},
+					this,
+				);
+			},
+
 			onGitGuiButtonClicked: function () {
-				console.log("Show window and call service");
 				this.mixins.KnGitGuiMixin.showModalBox();
 			},
 		},
@@ -51,12 +73,9 @@ define("MainHeaderSchema", ["KnGitGuiMixin"], function () {
 					click: {
 						bindTo: "onGitGuiButtonClicked",
 					},
-					// "canExecute": {
-					// 	"bindTo": "canBeDestroyed"
-					// },
-					// "visible": {
-					// 	"bindTo": "IsSystemDesignerButtonVisible"
-					// },
+					visible: {
+						bindTo: "CanUseGitClient",
+					},
 					imageConfig: {
 						bindTo: "Resources.Images.GitClientIcon",
 					},
