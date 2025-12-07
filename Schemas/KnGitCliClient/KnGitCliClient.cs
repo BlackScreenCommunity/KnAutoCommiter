@@ -66,7 +66,7 @@ namespace BPMSoft.Configuration
         /// <returns></returns>
         public Task<string> StatusPorcelainAsync(string directoryPath, CancellationToken ct = default(CancellationToken))
         {
-            return _executor.RunAsync(directoryPath, "status --porcelain=v1", null, ct, false);
+            return _executor.RunAsync(directoryPath, "status --porcelain=v1 -uall", null, ct, false);
         }
 
         /// <summary>
