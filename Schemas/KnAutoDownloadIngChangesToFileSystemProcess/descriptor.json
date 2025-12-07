@@ -1,0 +1,9 @@
+﻿{
+  "Descriptor": {
+    "UId": "77067b6e-720a-45d5-bf9e-7f96bf8bff0e",
+    "Name": "KnAutoDownloadIngChangesToFileSystemProcess",
+    "ModifiedOnUtc": "\/Date(1765103818000)\/",
+    "ManagerName": "ProcessSchemaManager",
+    "Caption": "Периодическая выгрузка изменений в файловую систему"
+  }
+}
