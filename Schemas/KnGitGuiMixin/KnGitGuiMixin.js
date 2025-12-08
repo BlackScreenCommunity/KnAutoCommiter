@@ -1,4 +1,3 @@
-/* eslint-disable prefer-class */
 define("KnGitGuiMixin", [
 	"ext-base",
 	"ServiceHelper",
@@ -11,6 +10,10 @@ define("KnGitGuiMixin", [
 		collection: null,
 		messageBoxInstance: null,
 
+		/**
+		 * Отображает модальное окно с интерфейсом
+		 * фиксации изменений
+		 */
 		showModalBox: function () {
 			var callback = function (data, log, countOfCommitsToPush) {
 				if (data && data.getCount() >= 0) {
@@ -46,6 +49,11 @@ define("KnGitGuiMixin", [
 						this,
 					);
 					this.messageBoxInstance.on("push", this.pushChanges, this);
+					this.messageBoxInstance.on(
+						"downloadChangesToFS",
+						this.downloadChangesToFileSystem,
+						this,
+					);
 
 					if (this.messageBoxInstance.visible) {
 						this.messageBoxInstance.initgrid();
@@ -112,6 +120,53 @@ define("KnGitGuiMixin", [
 			);
 		},
 
+		/**
+		 * Инициирует выгрузку изменений
+		 * в файловую систему
+		 */
+		downloadChangesToFileSystem: function () {
+			this.showMaskOnModalBox(
+				"Выгружаем изменения в файловую систему. Это может выполняться больше нескольких минут",
+			);
+
+			var config = {
+				serviceName: "KnCommiterService",
+				methodName: "SyncChangesWithFileSystem",
+				timeout: 100000,
+				data: {},
+				scope: this,
+				callback: function (result) {
+					if (result && result.SyncChangesWithFileSystemResult) {
+						BPMSoft.MaskHelper.HideBodyMask();
+						this.showModalBox();
+						if (
+							result.SyncChangesWithFileSystemResult.toLowerCase() ==
+							"true"
+						) {
+							BPMSoft.showInformation(
+								"Изменения были найдены и выгружены в файловую систему",
+							);
+						}
+
+						if (
+							result.SyncChangesWithFileSystemResult.toLowerCase() ==
+							"false"
+						) {
+							BPMSoft.showInformation(
+								"Новых изменений для выгрузки не было найдено",
+							);
+						}
+					}
+				},
+			};
+			ServiceHelper.callService(config);
+		},
+
+		/**
+		 * Отображает маску загрузки
+		 * при выполнении длительных операций
+		 * Например выгрузку в ФС или Push в репозиторий
+		 */
 		showMaskOnModalBox: function (caption) {
 			const maskConfig = {
 				selector: "#KnGitGuiMessageBox-wrap",

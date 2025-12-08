@@ -75,10 +75,17 @@ define("KnGitGuiMessageBox", [
 			this.callParent(arguments);
 
 			this.selectors = this.getSelectors();
+		},
 
+		/**
+		 * Регистрирует события для взаимодействия
+		 * с классом-миксином, отвечающий за
+		 * предоставление данных
+		 */
+		initEvents: function () {
 			this.addEvents("commitPrepared");
 			this.addEvents("push");
-			this.addEvents("downloadToFS");
+			this.addEvents("downloadChangesToFS");
 		},
 
 		/**
