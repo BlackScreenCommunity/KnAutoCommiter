@@ -1,0 +1,132 @@
+﻿{
+  "PackageData": [
+    {
+      "Row": [
+        {
+          "SchemaColumnUId": "ae0e45ca-c495-4fe7-a39d-3ab7278e1617",
+          "Value": "1c056bd0-9005-46da-bee4-535d89406f1c"
+        },
+        {
+          "SchemaColumnUId": "13aad544-ec30-4e76-a373-f0cff3202e24",
+          "Value": "KnAutocommiterRepoPath"
+        },
+        {
+          "SchemaColumnUId": "64fadca1-ab7c-4471-9d25-68599acc729b",
+          "Value": false
+        },
+        {
+          "SchemaColumnUId": "764cd95a-59b3-4060-b17f-2797d5c76aaa",
+          "Value": false
+        },
+        {
+          "SchemaColumnUId": "b2280617-35f9-4006-8634-c557a2e121c2",
+          "Value": "null"
+        },
+        {
+          "SchemaColumnUId": "eb971f1a-dd41-4668-99aa-1f2a6b61a1b9",
+          "Value": true
+        },
+        {
+          "SchemaColumnUId": "f7960a8a-1fd4-41d2-997a-fd78ea60075f",
+          "Value": "MaxSizeText"
+        }
+      ]
+    },
+    {
+      "Row": [
+        {
+          "SchemaColumnUId": "ae0e45ca-c495-4fe7-a39d-3ab7278e1617",
+          "Value": "26120291-81e1-4e9f-aab1-eed63b01badd"
+        },
+        {
+          "SchemaColumnUId": "13aad544-ec30-4e76-a373-f0cff3202e24",
+          "Value": "KnAutocommiterAuthorEmail"
+        },
+        {
+          "SchemaColumnUId": "64fadca1-ab7c-4471-9d25-68599acc729b",
+          "Value": false
+        },
+        {
+          "SchemaColumnUId": "764cd95a-59b3-4060-b17f-2797d5c76aaa",
+          "Value": false
+        },
+        {
+          "SchemaColumnUId": "b2280617-35f9-4006-8634-c557a2e121c2",
+          "Value": "null"
+        },
+        {
+          "SchemaColumnUId": "eb971f1a-dd41-4668-99aa-1f2a6b61a1b9",
+          "Value": true
+        },
+        {
+          "SchemaColumnUId": "f7960a8a-1fd4-41d2-997a-fd78ea60075f",
+          "Value": "MediumText"
+        }
+      ]
+    },
+    {
+      "Row": [
+        {
+          "SchemaColumnUId": "ae0e45ca-c495-4fe7-a39d-3ab7278e1617",
+          "Value": "7c16eb9e-17d9-43e7-ac36-c431a02a044b"
+        },
+        {
+          "SchemaColumnUId": "13aad544-ec30-4e76-a373-f0cff3202e24",
+          "Value": "KnAutocommiterDefaultCommitMessage"
+        },
+        {
+          "SchemaColumnUId": "64fadca1-ab7c-4471-9d25-68599acc729b",
+          "Value": false
+        },
+        {
+          "SchemaColumnUId": "764cd95a-59b3-4060-b17f-2797d5c76aaa",
+          "Value": false
+        },
+        {
+          "SchemaColumnUId": "b2280617-35f9-4006-8634-c557a2e121c2",
+          "Value": "null"
+        },
+        {
+          "SchemaColumnUId": "eb971f1a-dd41-4668-99aa-1f2a6b61a1b9",
+          "Value": true
+        },
+        {
+          "SchemaColumnUId": "f7960a8a-1fd4-41d2-997a-fd78ea60075f",
+          "Value": "MaxSizeText"
+        }
+      ]
+    },
+    {
+      "Row": [
+        {
+          "SchemaColumnUId": "ae0e45ca-c495-4fe7-a39d-3ab7278e1617",
+          "Value": "9876d05b-10a1-4487-802e-291d299ba56c"
+        },
+        {
+          "SchemaColumnUId": "13aad544-ec30-4e76-a373-f0cff3202e24",
+          "Value": "KnAutocommiterAuthorName"
+        },
+        {
+          "SchemaColumnUId": "64fadca1-ab7c-4471-9d25-68599acc729b",
+          "Value": false
+        },
+        {
+          "SchemaColumnUId": "764cd95a-59b3-4060-b17f-2797d5c76aaa",
+          "Value": false
+        },
+        {
+          "SchemaColumnUId": "b2280617-35f9-4006-8634-c557a2e121c2",
+          "Value": "null"
+        },
+        {
+          "SchemaColumnUId": "eb971f1a-dd41-4668-99aa-1f2a6b61a1b9",
+          "Value": true
+        },
+        {
+          "SchemaColumnUId": "f7960a8a-1fd4-41d2-997a-fd78ea60075f",
+          "Value": "ShortText"
+        }
+      ]
+    }
+  ]
+}
