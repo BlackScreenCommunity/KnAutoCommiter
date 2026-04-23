@@ -49,10 +49,9 @@
         /// <returns>Название схемы</returns>
         private static string ExtractSchemaName(string rawPath)
         {
-            var normalizedPath = rawPath.Replace('\\', Path.DirectorySeparatorChar)
-                                        .Replace('/', Path.DirectorySeparatorChar);
-
-            var segments = normalizedPath.Split(new[] { Path.DirectorySeparatorChar }, StringSplitOptions.RemoveEmptyEntries);
+            var normalizedPath = rawPath.Replace('\\', '/');
+            var segments = normalizedPath
+                .Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
 
             var packageFolderInfo = FindPackageFolder(segments);
             string schemaName;

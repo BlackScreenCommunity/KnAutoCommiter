@@ -165,7 +165,8 @@ namespace BPMSoft.Configuration
             {
                 string status = await GitCliClient.StatusPorcelainAsync(RepositoryPath);
 
-                var statusEntries = status.Split(new string[] { "\r\n" }, StringSplitOptions.None);
+                var statusEntries = status
+                    .Split(new[] { "\r\n", "\n" }, StringSplitOptions.RemoveEmptyEntries);
 
                 var cleanPathes = new List<string>();
                 foreach (var clean in statusEntries)
