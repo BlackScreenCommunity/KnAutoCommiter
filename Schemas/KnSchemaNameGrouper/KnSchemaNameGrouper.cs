@@ -26,13 +26,8 @@
         {
             var schemaWithFiles = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
-            foreach (var filePath in changedPaths ?? Enumerable.Empty<string>())
+            foreach (var filePath in NormalizeChangedPaths(changedPaths))
             {
-                if (string.IsNullOrWhiteSpace(filePath))
-                {
-                    continue;
-                }
-
                 string groupName = ExtractSchemaName(filePath);
                 AddFilePathToGroup(schemaWithFiles, filePath, groupName);
             }
@@ -40,6 +35,54 @@
             List<Schema> result = CreateSchemaGroups(schemaWithFiles);
 
             return result;
+        }
+
+        /// <summary>
+        /// Нормализует входные значения путей:
+        /// - делит единый blob на строки, если в него попал целиком git status;
+        /// - поддерживает реальные переводы строк и литералы \n / \r\n;
+        /// - убирает префиксы porcelain-статуса (например "M " или "?? ").
+        /// </summary>
+        private static IEnumerable<string> NormalizeChangedPaths(IEnumerable<string> changedPaths)
+        {
+            foreach (var rawPath in changedPaths ?? Enumerable.Empty<string>())
+            {
+                if (string.IsNullOrWhiteSpace(rawPath))
+                {
+                    continue;
+                }
+
+                var normalizedLineBreaks = rawPath
+                    .Replace("\\r\\n", "\n")
+                    .Replace("\\n", "\n")
+                    .Replace("\r\n", "\n");
+
+                var entries = normalizedLineBreaks
+                    .Split(new[] { '\n' }, StringSplitOptions.RemoveEmptyEntries);
+
+                foreach (var entry in entries)
+                {
+                    var candidate = entry.Trim();
+                    if (candidate.Length == 0)
+                    {
+                        continue;
+                    }
+
+                    if (candidate.Length > 3 && candidate[2] == ' ')
+                    {
+                        var statusCode = candidate.Substring(0, 2);
+                        if (statusCode.Any(ch => ch == '?' || char.IsLetter(ch) || ch == ' '))
+                        {
+                            candidate = candidate.Substring(3).Trim();
+                        }
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(candidate))
+                    {
+                        yield return candidate;
+                    }
+                }
+            }
         }
 
         /// <summary>
