@@ -1,6 +1,5 @@
-define("MainHeaderSchema", ["RightUtilities", "KnGitGuiMixin"], function (
-	RightUtilities,
-) {
+define("MainHeaderSchema", ["RightUtilities", "KnGitGuiMixin"], 
+function (RightUtilities,) {
 	return {
 		attributes: {
 			CanUseGitClient: {
@@ -16,6 +15,7 @@ define("MainHeaderSchema", ["RightUtilities", "KnGitGuiMixin"], function (
 			init: function () {
 				this.callParent(arguments);
 				this.getCanUseGitClient();
+				this.getCommiterVersion();
 			},
 
 			getCanUseGitClient: function () {
@@ -26,6 +26,26 @@ define("MainHeaderSchema", ["RightUtilities", "KnGitGuiMixin"], function (
 					},
 					this,
 				);
+			},
+
+			/**
+			 * Выводит в консоль версию коммитера
+			 */
+			getCommiterVersion: function (commit) {
+				var bpmsoftUrl = window.location.origin;
+				BPMSoft.AjaxProvider.request({
+					url: bpmsoftUrl + "/rest/KnCommiterService/Version",
+					headers: {
+						"Accept": "application/json",
+						"Content-Type": "application/json"
+					},
+					method: "GET",
+					callback: function (request, status, result) {
+						let response = JSON.parse(result?.responseText);
+						console.log("KnCommiter version: " + response?.VersionResult);
+					},
+					scope: this
+				});
 			},
 
 			onGitGuiButtonClicked: function () {
