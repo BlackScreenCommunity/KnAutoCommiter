@@ -110,9 +110,9 @@ namespace BPMSoft.Configuration
         /// <returns></returns>
         [OperationContract]
         [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
-        public string Ping()
+        public string Version()
         {
-            return "Pong 2025/10/08/v01";
+            return "2026/05/12/v01";
 
         }
 
