@@ -223,10 +223,14 @@ define("KnGitGuiMixin", [
 		 * каталоге репозитория
 		 */
 		prepareCollection: function (callback) {
-			ServiceHelper.callService(
-				"KnCommiterService",
-				"GetRepoStatusWithSchemas",
-				function (response) {
+
+			var config = {
+				serviceName: "KnCommiterService",
+				methodName: "GetRepoStatusWithSchemas",
+				timeout: 100000,
+				data: {},
+				scope: this,
+				callback: function (response) {
 					if (
 						response &&
 						response.GetRepoStatusWithSchemasResult &&
@@ -247,9 +251,9 @@ define("KnGitGuiMixin", [
 						]);
 					}
 				},
-				{},
-				this,
-			);
+			};
+
+			ServiceHelper.callService(config);
 		},
 
 		/**
