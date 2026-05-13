@@ -49,6 +49,7 @@ define("KnGitGuiMixin", [
 						this,
 					);
 					this.messageBoxInstance.on("push", this.pushChanges, this);
+					this.messageBoxInstance.on("pull", this.pullChanges, this);
 					this.messageBoxInstance.on(
 						"downloadChangesToFS",
 						this.downloadChangesToFileSystem,
@@ -111,6 +112,31 @@ define("KnGitGuiMixin", [
 						if (result.PushResult == "ok") {
 							BPMSoft.showInformation(
 								"Все изменения зафиксированы в репозитории",
+							);
+						}
+					}
+				},
+				{},
+				this,
+			);
+		},
+
+		/**
+		 * Инициирует получение изменений
+		 * из удаленного репозитория
+		 */
+		pullChanges: function () {
+			this.showMaskOnModalBox("Загружаем изменения с сервера");
+			ServiceHelper.callService(
+				"KnCommiterService",
+				"Pull",
+				function (result) {
+					if (result && result.PullResult) {
+						BPMSoft.MaskHelper.HideBodyMask();
+						this.showModalBox();
+						if (result.PullResult == "ok") {
+							BPMSoft.showInformation(
+								"Изменения успешно получены из репозитория",
 							);
 						}
 					}

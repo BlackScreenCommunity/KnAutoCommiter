@@ -254,6 +254,23 @@ namespace BPMSoft.Configuration
 
         [OperationContract]
         [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
+        public async Task<string> Pull()
+        {
+            try
+            {
+                var remoteInfo = await GitCliClient.GetUpstreamAsync(RepositoryPath);
+
+                await GitCliClient.PullFastForwardAsync(RepositoryPath, remoteInfo.Remote, remoteInfo.Branch);
+                return "ok";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message;
+            }
+        }
+
+        [OperationContract]
+        [WebInvoke(Method = "POST", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
         public async Task<string> SyncChangesWithFileSystem()
         {
             try
