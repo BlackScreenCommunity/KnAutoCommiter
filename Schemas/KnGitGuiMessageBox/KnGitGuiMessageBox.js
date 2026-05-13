@@ -205,16 +205,16 @@ define("KnGitGuiMessageBox", [
 		 * Добавить кнопку получения изменений (pull)
 		 */
 		renderPullButton: function () {
-			let pullButtonContainer = Ext.get("kn-dialog-pull-button");
+			let pullButtonContainer = Ext.get("KnGitGuiMessageBox-pull-button");
 
 			Ext.create("BPMSoft.Button", {
 				id: "GitGuiMessageBoxPullButton",
 				className: "BPMSoft.Button",
-				caption: "Получить изменения с сервера",
+				//caption: "Получить изменения с сервера",
 				markerValue: "pull",
 				returnCode: "pull",
 				style: "transparent",
-				imageConfig: this.getButtonImageConfig("PushButtonIcon"),
+				imageConfig: this.getButtonImageConfig("PullButton"),
 				handler: this.onMessageBoxPullButtonClick.bind(this),
 				renderTo: pullButtonContainer,
 			});
@@ -257,6 +257,7 @@ define("KnGitGuiMessageBox", [
 				'<div class="header-with-button">',
 				'<div id="{id}-message" class="{messageClass}">Незафиксированные изменения</div>',
 				'<div id="{id}-reload-button" class="{messageClass}" data-tour="download-changes-button"></div>',
+				'<div id="{id}-pull-button" class="{messageClass}" data-tour="pull-button"></div>',
 				"</div>",
 				'<div id="{id}-grid" class="{gridClass}" data-tour="unstaged"></div>',
 				'<div id="{id}-commit-message-text-box" class="{commitMessageTextBox}" data-tour="message"></div>',
@@ -264,7 +265,6 @@ define("KnGitGuiMessageBox", [
 				'<div id="kn-dialog-commit-button" data-tour="commit-button"></div>',
 				'<div class="push-button-container">',
 				'<div id="kn-dialog-push-button" data-tour="push-button"></div>',
-				'<div id="kn-dialog-pull-button" data-tour="pull-button"></div>',
 				'<div id="kn-dialog-push-button-counter" class="push-button-counter" data-tour="push-button-counter"></div>',
 				"</dev>",
 				"</dev>",
@@ -395,6 +395,11 @@ define("KnGitGuiMessageBox", [
 				{
 					selector: '[data-tour="push-button-counter"]',
 					text: "<b>Количество неотправленных комитов</b>. Если счетчик показывает 0, то все подготовленные коммиты отправлены на сервер и вся команда может забрать эти изменения. Если значение 0, то отправка не будет запущена",
+					pos: "top",
+				},
+				{
+					selector: '[data-tour="pull-button"]',
+					text: "Скачать все изменения из удаленного репозитория. Не выполнится корректно в случае, если есть незафиксированные и неотправленные изменения",
 					pos: "top",
 				},
 			];
