@@ -85,6 +85,7 @@ define("KnGitGuiMessageBox", [
 		initEvents: function () {
 			this.addEvents("commitPrepared");
 			this.addEvents("push");
+			this.addEvents("pull");
 			this.addEvents("downloadChangesToFS");
 		},
 
@@ -118,6 +119,7 @@ define("KnGitGuiMessageBox", [
 			this.adjustDialog();
 			this.renderCommitButton();
 			this.renderPushButton();
+			this.renderPullButton();
 			this.renderDownloadChangesToFSButton();
 		},
 
@@ -132,6 +134,7 @@ define("KnGitGuiMessageBox", [
 			this.adjustDialog();
 			this.renderCommitButton();
 			this.renderPushButton();
+			this.renderPullButton();
 			this.renderDownloadChangesToFSButton();
 		},
 
@@ -197,6 +200,26 @@ define("KnGitGuiMessageBox", [
 			});
 		},
 
+
+		/**
+		 * Добавить кнопку получения изменений (pull)
+		 */
+		renderPullButton: function () {
+			let pullButtonContainer = Ext.get("kn-dialog-pull-button");
+
+			Ext.create("BPMSoft.Button", {
+				id: "GitGuiMessageBoxPullButton",
+				className: "BPMSoft.Button",
+				caption: "Получить изменения с сервера",
+				markerValue: "pull",
+				returnCode: "pull",
+				style: "transparent",
+				imageConfig: this.getButtonImageConfig("PushButtonIcon"),
+				handler: this.onMessageBoxPullButtonClick.bind(this),
+				renderTo: pullButtonContainer,
+			});
+		},
+
 		/**
 		 * Добавить кнопку обновления
 		 * списка незафиксированных изменений
@@ -241,6 +264,7 @@ define("KnGitGuiMessageBox", [
 				'<div id="kn-dialog-commit-button" data-tour="commit-button"></div>',
 				'<div class="push-button-container">',
 				'<div id="kn-dialog-push-button" data-tour="push-button"></div>',
+				'<div id="kn-dialog-pull-button" data-tour="pull-button"></div>',
 				'<div id="kn-dialog-push-button-counter" class="push-button-counter" data-tour="push-button-counter"></div>',
 				"</dev>",
 				"</dev>",
@@ -535,6 +559,14 @@ define("KnGitGuiMessageBox", [
 			}
 
 			this.fireEvent("push");
+		},
+
+
+		/**
+		 * Обработчик нажатия на кнопку "Получить изменения с сервера"
+		 */
+		onMessageBoxPullButtonClick: function () {
+			this.fireEvent("pull");
 		},
 
 		/**
