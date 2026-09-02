@@ -32,7 +32,18 @@
                 BindingFlags.NonPublic | BindingFlags.Instance
                 );
 
-            var result = method.Invoke(instance, new object[] { null, true });
+            var parameters = method.GetParameters();
+            var args = new object[parameters.Length];
+            for (int i = 0; i < parameters.Length; i++)
+            {
+                args[i] = parameters[i].HasDefaultValue ? parameters[i].DefaultValue : null;
+            }
+            if (args.Length > 1)
+            {
+                args[1] = true; // skipFileSystemEnabledSchemaManagers
+            }
+
+            var result = method.Invoke(instance, args);
 
             var resultType = result.GetType();
             var status = resultType.GetProperty("HasChanges", BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
