@@ -19,3 +19,5 @@ KnAutocommiterRunner/obj
 *.*-*.xml
 !*.ru-RU.xml
 !*.en-US.xml
+
+.opencode/
