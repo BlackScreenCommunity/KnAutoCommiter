@@ -60,7 +60,7 @@ function (RightUtilities,) {
 			{
 				operation: "insert",
 				name: "GitGuiContainer",
-				parentName: "InnerRightButtonsContainer",
+				parentName: "RightHeaderContainer",
 				propertyName: "items",
 				values: {
 					id: "header-git-gui-container",
