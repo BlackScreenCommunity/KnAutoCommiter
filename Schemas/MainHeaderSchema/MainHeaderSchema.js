@@ -76,7 +76,7 @@ function (RightUtilities,) {
 				parentName: "GitGuiContainer",
 				propertyName: "items",
 				values: {
-					id: "view-button-system-designer",
+					id: "view-button-git-client",
 					itemType: BPMSoft.ViewItemType.BUTTON,
 					selectors: {
 						wrapEl: "git-client-open-button",
