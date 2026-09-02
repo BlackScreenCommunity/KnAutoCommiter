@@ -1,0 +1,9 @@
+﻿{
+  "Descriptor": {
+    "UId": "d097266f-7117-48d4-9385-099f342aae69",
+    "Name": "KnAutoLoadToFS",
+    "ModifiedOnUtc": "\/Date(1788365178000)\/",
+    "ManagerName": "ProcessSchemaManager",
+    "Caption": "Автоматическая выгрузка изменений в ФС"
+  }
+}
