@@ -3,6 +3,7 @@
 	padding: 32px;
 	position: fixed;
 	background-color: #fff;
+	border-radius: 12px;
 	z-index: 1011;
 }
 
@@ -110,6 +111,14 @@
 	max-height: 10em;
 	min-height: 5em;
 	width: 100%;
+	box-sizing: border-box;
+	border: 1px solid var(--field-underline);
+	border-radius: 4px;
+	transition: border-color 0.15s ease;
+}
+
+#commit-message-memo-edit-wrap:focus-within {
+	border-color: var(--palette-primary-500);
 }
 
 #commit-message-memo-edit-el {
@@ -117,7 +126,8 @@
 	min-height: 5em;
 	width: 100%;
 	overflow: auto;
-	padding-top: 5px;
+	padding: 5px 8px;
+	box-sizing: border-box;
 }
 
 #KnGitGuiMessageBox-log-container {
