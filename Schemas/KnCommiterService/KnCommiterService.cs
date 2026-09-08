@@ -112,7 +112,7 @@ namespace BPMSoft.Configuration
         [WebInvoke(Method = "GET", RequestFormat = WebMessageFormat.Json, BodyStyle = WebMessageBodyStyle.Wrapped, ResponseFormat = WebMessageFormat.Json)]
         public string Version()
         {
-            return "2026/05/12/v01";
+            return "2026/09/07/v02";
 
         }
 

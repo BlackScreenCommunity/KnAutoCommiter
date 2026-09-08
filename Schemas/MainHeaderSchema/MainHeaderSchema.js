@@ -1,5 +1,8 @@
-define("MainHeaderSchema", ["RightUtilities", "KnGitGuiMixin"], 
+define("MainHeaderSchema", ["RightUtilities", "KnGitGuiMixin"],
 function (RightUtilities,) {
+
+	var CLIENT_VERSION = "2026-09-07/v01";
+
 	return {
 		attributes: {
 			CanUseGitClient: {
@@ -14,6 +17,7 @@ function (RightUtilities,) {
 		methods: {
 			init: function () {
 				this.callParent(arguments);
+				console.log("KnGitGui client version: " + CLIENT_VERSION);
 				this.getCanUseGitClient();
 				this.getCommiterVersion();
 			},

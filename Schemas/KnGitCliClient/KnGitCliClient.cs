@@ -129,8 +129,19 @@ namespace BPMSoft.Configuration
             if (!string.IsNullOrEmpty(authorName)) env["GIT_COMMITTER_NAME"] = authorName;
             if (!string.IsNullOrEmpty(authorEmail)) env["GIT_COMMITTER_EMAIL"] = authorEmail;
 
-            await _executor.RunAsync(directoryPath, "commit -m " + EscapeString(message), env, ct, /*acceptNonZeroExit*/ true)
+            var result = await _executor.RunRawAsync(directoryPath, "commit -m " + EscapeString(message), env, ct)
                 .ConfigureAwait(false);
+
+            if (result.ExitCode != 0)
+            {
+                var combinedOutput = (result.StdOut + result.StdErr).Trim();
+
+                var isNothingToCommit = combinedOutput.IndexOf("nothing to commit", StringComparison.OrdinalIgnoreCase) >= 0;
+                if (!isNothingToCommit)
+                {
+                    throw new GitCliException("Коммит не выполнен:" + Environment.NewLine + combinedOutput);
+                }
+            }
         }
 
         /// <summary>
@@ -413,8 +424,58 @@ namespace BPMSoft.Configuration
           CancellationToken ct,
           bool acceptNonZeroExit)
         {
-            var tcs = new TaskCompletionSource<string>();
-            var p = InitProcess(workingDir, arguments, extraEnv, acceptNonZeroExit, tcs);
+            return RunCoreAsync(workingDir, arguments, extraEnv, ct, (exitCode, stdout, stderr) =>
+            {
+                if (exitCode != 0 && !acceptNonZeroExit)
+                {
+                    throw new GitCliException(BuildErrorMessage(arguments, exitCode, stdout, stderr));
+                }
+                return stdout;
+            });
+        }
+
+        /// <summary>
+        /// Выполняет git-команду и всегда возвращает результат (код возврата, stdout, stderr),
+        /// не бросая исключение при ненулевом коде завершения - решение о том, является ли это
+        /// ошибкой, принимает вызывающий код
+        /// </summary>
+        public Task<GitCommandResult> RunRawAsync(
+          string workingDir,
+          string arguments,
+          IDictionary<string, string> extraEnv,
+          CancellationToken ct)
+        {
+            return RunCoreAsync(workingDir, arguments, extraEnv, ct,
+                (exitCode, stdout, stderr) => new GitCommandResult(exitCode, stdout, stderr));
+        }
+
+        private static string BuildErrorMessage(string arguments, int exitCode, string stdout, string stderr)
+        {
+            var sb = new StringBuilder();
+            sb.Append("git ").Append(arguments).AppendLine();
+            sb.Append("ExitCode: ").Append(exitCode).AppendLine();
+            if (!string.IsNullOrWhiteSpace(stdout))
+            {
+                sb.AppendLine("STDOUT:");
+                sb.AppendLine(stdout);
+            }
+            if (!string.IsNullOrWhiteSpace(stderr))
+            {
+                sb.AppendLine("STDERR:");
+                sb.AppendLine(stderr);
+            }
+            return sb.ToString();
+        }
+
+        private Task<T> RunCoreAsync<T>(
+          string workingDir,
+          string arguments,
+          IDictionary<string, string> extraEnv,
+          CancellationToken ct,
+          Func<int, string, string, T> resultFactory)
+        {
+            var tcs = new TaskCompletionSource<T>();
+            var p = InitProcess(workingDir, arguments, extraEnv, resultFactory, tcs);
 
             try
             {
@@ -435,7 +496,7 @@ namespace BPMSoft.Configuration
             return tcs.Task;
         }
 
-        private void DoProcessComand(CancellationToken ct, Process p, TaskCompletionSource<string> tcs)
+        private void DoProcessComand<T>(CancellationToken ct, Process p, TaskCompletionSource<T> tcs)
         {
             p.BeginOutputReadLine();
             p.BeginErrorReadLine();
@@ -460,8 +521,8 @@ namespace BPMSoft.Configuration
             }, timeoutCts.Token);
         }
 
-        private Process InitProcess(string workingDir, string arguments, IDictionary<string, string> extraEnv, bool acceptNonZeroExit,
-            TaskCompletionSource<string> tcs)
+        private Process InitProcess<T>(string workingDir, string arguments, IDictionary<string, string> extraEnv,
+            Func<int, string, string, T> resultFactory, TaskCompletionSource<T> tcs)
         {
             var psi = new ProcessStartInfo
             {
@@ -493,7 +554,7 @@ namespace BPMSoft.Configuration
             {
                 if (e.Data != null) stderr.AppendLine(e.Data);
             };
-            p.Exited += (s, e) => HandleProcessExit(arguments, acceptNonZeroExit, p, stderr, tcs, stdout);
+            p.Exited += (s, e) => HandleProcessExit(resultFactory, p, stderr, tcs, stdout);
             return p;
         }
 
@@ -510,8 +571,8 @@ namespace BPMSoft.Configuration
             catch { /* ignore */ }
         }
 
-        private static void HandleProcessExit(string arguments, bool acceptNonZeroExit, Process p, StringBuilder stderr,
-            TaskCompletionSource<string> tcs, StringBuilder stdout)
+        private static void HandleProcessExit<T>(Func<int, string, string, T> resultFactory, Process p, StringBuilder stderr,
+            TaskCompletionSource<T> tcs, StringBuilder stdout)
         {
             try
             {
@@ -520,17 +581,7 @@ namespace BPMSoft.Configuration
                 var exitCode = p.ExitCode;
                 p.Dispose();
 
-                if (exitCode != 0 && !acceptNonZeroExit)
-                {
-                    var msg = "git " + arguments + Environment.NewLine +
-                              "ExitCode: " + exitCode + Environment.NewLine +
-                              "STDERR:" + Environment.NewLine + stderr;
-                    tcs.TrySetException(new GitCliException(msg));
-                }
-                else
-                {
-                    tcs.TrySetResult(stdout.ToString());
-                }
+                tcs.TrySetResult(resultFactory(exitCode, stdout.ToString(), stderr.ToString()));
             }
             catch (Exception ex)
             {
@@ -611,6 +662,20 @@ namespace BPMSoft.Configuration
     public sealed class GitCliException : Exception
     {
         public GitCliException(string message) : base(message) { }
+    }
+
+    public sealed class GitCommandResult
+    {
+        public int ExitCode { get; private set; }
+        public string StdOut { get; private set; }
+        public string StdErr { get; private set; }
+
+        public GitCommandResult(int exitCode, string stdOut, string stdErr)
+        {
+            ExitCode = exitCode;
+            StdOut = stdOut;
+            StdErr = stdErr;
+        }
     }
 
 

@@ -88,6 +88,10 @@ define("KnGitGuiMixin", [
 							BPMSoft.showInformation(
 								"Коммит подготовлен. Можно отправить изменения",
 							);
+						} else {
+							BPMSoft.showErrorMessage(
+								result.AddAndCommitChangesResult,
+							);
 						}
 					}
 				},
@@ -113,6 +117,8 @@ define("KnGitGuiMixin", [
 							BPMSoft.showInformation(
 								"Все изменения зафиксированы в репозитории",
 							);
+						} else {
+							BPMSoft.showErrorMessage(result.PushResult);
 						}
 					}
 				},
@@ -138,6 +144,8 @@ define("KnGitGuiMixin", [
 							BPMSoft.showInformation(
 								"Изменения успешно получены из репозитория",
 							);
+						} else {
+							BPMSoft.showErrorMessage(result.PullResult);
 						}
 					}
 				},
