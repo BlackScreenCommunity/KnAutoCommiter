@@ -87,6 +87,7 @@ define("KnGitGuiMessageBox", [
 			this.addEvents("push");
 			this.addEvents("pull");
 			this.addEvents("downloadChangesToFS");
+			this.addEvents("refresh");
 		},
 
 		/**
@@ -121,6 +122,7 @@ define("KnGitGuiMessageBox", [
 			this.renderPushButton();
 			this.renderPullButton();
 			this.renderDownloadChangesToFSButton();
+			this.renderRefreshButton();
 		},
 
 		/**
@@ -136,6 +138,7 @@ define("KnGitGuiMessageBox", [
 			this.renderPushButton();
 			this.renderPullButton();
 			this.renderDownloadChangesToFSButton();
+			this.renderRefreshButton();
 		},
 
 		/**
@@ -210,11 +213,10 @@ define("KnGitGuiMessageBox", [
 			Ext.create("BPMSoft.Button", {
 				id: "GitGuiMessageBoxPullButton",
 				className: "BPMSoft.Button",
-				//caption: "Получить изменения с сервера",
+				caption: "Получить изменения с сервера Git",
 				markerValue: "pull",
 				returnCode: "pull",
 				style: "transparent",
-				imageConfig: this.getButtonImageConfig("PullButton"),
 				handler: this.onMessageBoxPullButtonClick.bind(this),
 				renderTo: pullButtonContainer,
 			});
@@ -233,14 +235,33 @@ define("KnGitGuiMessageBox", [
 			Ext.create("BPMSoft.Button", {
 				id: "GitGuiDownloadChangesToFSButton",
 				className: "BPMSoft.Button",
+				caption: "Выгрузить изменения в файловую систему",
 				markerValue: "downloadToFS",
 				returnCode: "downloadToFS",
 				style: "transparent",
-				imageConfig: this.getButtonImageConfig(
-					"DownloadChangesToFSButton",
-				),
 				handler: this.onDownloadChangesToFSButtonClick.bind(this),
 				renderTo: downloadChangesToFSContainer,
+			});
+		},
+
+		/**
+		 * Добавить кнопку обновления реестра
+		 * незафиксированных изменений (повторный запрос git status)
+		 */
+		renderRefreshButton: function () {
+			let refreshButtonContainer = Ext.get(
+				"KnGitGuiMessageBox-refresh-button",
+			);
+
+			Ext.create("BPMSoft.Button", {
+				id: "GitGuiRefreshButton",
+				className: "BPMSoft.Button",
+				caption: "Обновить реестр",
+				markerValue: "refresh",
+				returnCode: "refresh",
+				style: "transparent",
+				handler: this.onMessageBoxRefreshButtonClick.bind(this),
+				renderTo: refreshButtonContainer,
 			});
 		},
 
@@ -256,8 +277,11 @@ define("KnGitGuiMessageBox", [
 				'<div id="{id}-log-container" class="{log-container}" data-tour="last"></div>',
 				'<div class="header-with-button">',
 				'<div id="{id}-message" class="{messageClass}">Незафиксированные изменения</div>',
-				'<div id="{id}-reload-button" class="{messageClass}" data-tour="download-changes-button"></div>',
-				'<div id="{id}-pull-button" class="{messageClass}" data-tour="pull-button"></div>',
+				'<div class="header-buttons-group">',
+				'<div id="{id}-refresh-button" data-tour="refresh-button"></div>',
+				'<div id="{id}-reload-button" data-tour="download-changes-button"></div>',
+				'<div id="{id}-pull-button" data-tour="pull-button"></div>',
+				"</div>",
 				"</div>",
 				'<div id="{id}-grid" class="{gridClass}" data-tour="unstaged"></div>',
 				'<div id="{id}-commit-message-text-box" class="{commitMessageTextBox}" data-tour="message"></div>',
@@ -568,10 +592,17 @@ define("KnGitGuiMessageBox", [
 
 
 		/**
-		 * Обработчик нажатия на кнопку "Получить изменения с сервера"
+		 * Обработчик нажатия на кнопку "Получить изменения с сервера Git"
 		 */
 		onMessageBoxPullButtonClick: function () {
 			this.fireEvent("pull");
+		},
+
+		/**
+		 * Обработчик нажатия на кнопку "Обновить реестр"
+		 */
+		onMessageBoxRefreshButtonClick: function () {
+			this.fireEvent("refresh");
 		},
 
 		/**

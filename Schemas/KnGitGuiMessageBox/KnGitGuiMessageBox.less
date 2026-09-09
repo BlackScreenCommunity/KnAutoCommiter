@@ -143,16 +143,6 @@
   max-width: 16em;
 }
 
-#GitGuiDownloadChangesToFSButton-imageEl {
-	width: 2em;
-	height: 2em;
-}
-
-#GitGuiMessageBoxPullButton-imageEl {
-	width: 2em;
-	height: 2em;
-}
-
 .kn-log-status-item {
   display: block;
   padding: 4px 8px;
@@ -172,6 +162,49 @@
 
 .header-with-button {
 	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	row-gap: 8px;
+	column-gap: 16px;
+	margin-bottom: 8px;
+}
+
+.header-buttons-group {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+#KnGitGuiMessageBox-refresh-button,
+#KnGitGuiMessageBox-reload-button,
+#KnGitGuiMessageBox-pull-button {
+	display: inline-flex;
+	align-items: center;
+	margin: 0;
+	padding: 2px 10px;
+	border: 1px solid var(--field-underline);
+	border-radius: 6px;
+	background-color: transparent;
+	font-size: 1em;
+	font-weight: normal;
+	line-height: normal;
+	box-sizing: border-box;
+}
+
+#KnGitGuiMessageBox-refresh-button *,
+#KnGitGuiMessageBox-reload-button *,
+#KnGitGuiMessageBox-pull-button * {
+	padding: 0;
+	margin: 0;
+	line-height: normal;
+}
+
+#KnGitGuiMessageBox-refresh-button:hover,
+#KnGitGuiMessageBox-reload-button:hover,
+#KnGitGuiMessageBox-pull-button:hover {
+	background-color: var(--field-underline);
 }
 
 .push-button-container {

@@ -55,6 +55,11 @@ define("KnGitGuiMixin", [
 						this.downloadChangesToFileSystem,
 						this,
 					);
+					this.messageBoxInstance.on(
+						"refresh",
+						this.refreshChanges,
+						this,
+					);
 
 					if (this.messageBoxInstance.visible) {
 						this.messageBoxInstance.initgrid();
@@ -152,6 +157,14 @@ define("KnGitGuiMixin", [
 				{},
 				this,
 			);
+		},
+
+		/**
+		 * Обновляет реестр незафиксированных изменений
+		 * и журнал коммитов без выполнения git операций
+		 */
+		refreshChanges: function () {
+			this.showModalBox();
 		},
 
 		/**

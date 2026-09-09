@@ -21,3 +21,4 @@ KnAutocommiterRunner/obj
 !*.en-US.xml
 
 .opencode/
+.claude/
