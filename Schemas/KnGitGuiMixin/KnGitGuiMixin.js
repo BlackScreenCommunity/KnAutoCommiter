@@ -296,6 +296,10 @@ define("KnGitGuiMixin", [
 							response.GetRepoStatusWithSchemasResult
 								.CommitsToPushCount,
 						]);
+					} else {
+						BPMSoft.showErrorMessage(
+							"Не удалось получить статус репозитория. Проверьте системную настройку \"Автокоммитер. Путь до репозитория\"",
+						);
 					}
 				},
 			};
