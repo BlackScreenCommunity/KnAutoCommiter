@@ -385,6 +385,10 @@ define("KnGitGuiMessageBox", [
 		onHelpButtonClick: function () {
 			const modal = document.getElementById("KnGitGuiMessageBox-wrap");
 
+			if (modal.querySelector(".tour-layer")) {
+				return;
+			}
+
 			const steps = [
 				{
 					selector: '[data-tour="last"]',
@@ -397,8 +401,18 @@ define("KnGitGuiMessageBox", [
 					pos: "bottom",
 				},
 				{
+					selector: '[data-tour="refresh-button"]',
+					text: "<b>Обновить реестр</b>. Повторно запрашивает список незафиксированных изменений (git status). Нажми, если список устарел или ты внёс изменения после открытия окна.",
+					pos: "bottom",
+				},
+				{
 					selector: '[data-tour="download-changes-button"]',
 					text: "<b>Кнопка выгрузки изменений из BPMSoft</b>. Если не видишь свои изменения, связанные с созданием новых объектов (например, привязки данных или процесса), нажми эту кнопку. <br/> Процесс может занять несколько минут, поэтому он не запускается автоматически при открытии окна.",
+					pos: "bottom",
+				},
+				{
+					selector: '[data-tour="pull-button"]',
+					text: "Скачать все изменения из удаленного репозитория. Не выполнится корректно в случае, если есть незафиксированные и неотправленные изменения",
 					pos: "bottom",
 				},
 				{
@@ -419,11 +433,6 @@ define("KnGitGuiMessageBox", [
 				{
 					selector: '[data-tour="push-button-counter"]',
 					text: "<b>Количество неотправленных комитов</b>. Если счетчик показывает 0, то все подготовленные коммиты отправлены на сервер и вся команда может забрать эти изменения. Если значение 0, то отправка не будет запущена",
-					pos: "top",
-				},
-				{
-					selector: '[data-tour="pull-button"]',
-					text: "Скачать все изменения из удаленного репозитория. Не выполнится корректно в случае, если есть незафиксированные и неотправленные изменения",
 					pos: "top",
 				},
 			];
@@ -535,6 +544,12 @@ define("KnGitGuiMessageBox", [
 		 * Обработчик нажатия на кнопку "Закрыть"
 		 */
 		onCloseMessageBoxButtonClick: function () {
+			const modal = document.getElementById("KnGitGuiMessageBox-wrap");
+			const tourLayer = modal && modal.querySelector(".tour-layer");
+			if (tourLayer) {
+				tourLayer.remove();
+			}
+
 			this.hide();
 		},
 
